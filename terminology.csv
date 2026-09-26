@@ -1454,7 +1454,7 @@
 "Returning the rear seatbacks","Terugklappen van de rugleuningen van de achterstoelen"
 "Reverse estimated course lines","Geschatte richtingslijnen bij achteruitrijden"
 "Reverse warning buzzer","Waarschuwingszoemer achteruitrijden"
-"Reversing","Achteruit rijden"
+"reversing","achteruitrijden"
 "Riding with children","Rijden met kinderen aan boord"
 "Right","Rechts"
 "Right-hand drive vehicles","Auto’s met stuur rechts"
@@ -2029,3 +2029,4 @@
 "overhead view","bovenaanzicht"
 "operation target","doelobject"
 "operation targets","doelobjecten"
+"static objects front and rear of the vehicle","stilstaande objecten voor en achter het voertuig"
