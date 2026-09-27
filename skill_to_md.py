@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
-"""Unzip the Solterra skill and combine every file it contains into one Markdown file.
-
-Files are written one after the other, SKILL.md first, then the rest in
-archive order. Markdown files are inserted as-is; every other file is wrapped
-in a fenced code block.
-
-Usage:
-    python skill_to_md.py [ZIP] [-o OUTPUT.md] [-x EXTRACT_DIR]
-"""
+# Unzip the Solterra skill and combine every file it contains into one Markdown file.
+#
+# Files are written one after the other, SKILL.md first, then the rest in
+# archive order. Markdown files are inserted as-is; every other file is wrapped
+# in a fenced code block.
+#
+# Usage:
+#     python skill_to_md.py [ZIP] [-o OUTPUT.md] [-x EXTRACT_DIR]
 
 import argparse
 import re
@@ -26,7 +25,7 @@ LANGUAGES = {
 
 
 def fence_for(text):
-    """Return a backtick fence longer than any backtick run inside the text."""
+    # Return a backtick fence longer than any backtick run inside the text.
     longest = max((len(m) for m in re.findall(r"`+", text)), default=0)
     return "`" * max(3, longest + 1)
 
@@ -72,7 +71,7 @@ def build_markdown(zip_path):
 
 
 def main():
-    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser = argparse.ArgumentParser(description="Unzip a skill and combine its files into one Markdown file.")
     parser.add_argument("zip", nargs="?", default="solterra-batch-translation.zip",
                         help="skill archive (default: %(default)s)")
     parser.add_argument("-o", "--output", help="output Markdown file (default: <zip name>.md)")
