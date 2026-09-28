@@ -1271,117 +1271,117 @@ RowIndex,English,Translation,Status
 1270,"(<NU x=""2"">&amp;rarr;</NU>P.###)","(<NU x=""1"">&amp;rarr;</NU>P.###)",Translated
 1271,Function,Functie,Translated
 1272,Customized setting,Aangepaste instelling,Translated
-1273,Powertrain control in custom mode,Powertrain control in custom mode,
+1273,Powertrain control in custom mode,Regeling van de aandrijflijn in de aangepaste modus,Translated
 1274,Normal,Normaal,Translated
-1275,Sport,Sport,
-1276,Eco,Eco,
-1277,Range,Range,
+1275,Sport,Sport,Translated
+1276,Eco,Eco,Translated
+1277,Range,Actieradius,Translated
 1278,O,O,Translated
-1279,–,–,
-1280,–,–,
-1281,Steering wheel control in custom mode,Steering wheel control in custom mode,
+1279,–,–,Translated
+1280,–,–,Translated
+1281,Steering wheel control in custom mode,Regeling van het stuur in de aangepaste modus,Translated
 1282,Normal,Normaal,Translated
-1283,Sport,Sport,
+1283,Sport,Sport,Translated
 1284,O,O,Translated
-1285,–,–,
-1286,–,–,
-1287,Air conditioning operation in custom mode,Air conditioning operation in custom mode,
+1285,–,–,Translated
+1286,–,–,Translated
+1287,Air conditioning operation in custom mode,Werking van de airco in de aangepaste modus,Translated
 1288,Normal,Normaal,Translated
-1289,Eco,Eco,
-1290,Range,Range,
+1289,Eco,Eco,Translated
+1290,Range,Actieradius,Translated
 1291,O,O,Translated
-1292,–,–,
-1293,–,–,
+1292,–,–,Translated
+1293,–,–,Translated
 1294,Automatic air conditioning system ,Automatisch aircosysteem ,Translated
-1295,"(<NU x=""2"" g=""2"">&amp;rarr;</NU><Tag pos=""Point"" x=""3"" type=""InlineVariable"" g=""3"">&lt;xref type = &quot;P.page&quot; srcfile = &quot;A6790GEtoeuenvhch06.xml#ch06se010402&quot;/&gt;</Tag>)","(<NU x=""2"" g=""2"">&amp;rarr;</NU><Tag pos=""Point"" x=""3"" type=""InlineVariable"" g=""3"">&lt;xref type = &quot;P.page&quot; srcfile = &quot;A6790GEtoeuenvhch06.xml#ch06se010402&quot;/&gt;</Tag>)",
+1295,"(<NU x=""2"" g=""2"">&amp;rarr;</NU><Tag pos=""Point"" x=""3"" type=""InlineVariable"" g=""3"">&lt;xref type = &quot;P.page&quot; srcfile = &quot;A6790GEtoeuenvhch06.xml#ch06se010402&quot;/&gt;</Tag>)","(<NU x=""2"" g=""2"">&amp;rarr;</NU><Tag pos=""Point"" x=""3"" type=""InlineVariable"" g=""3"">&lt;xref type = &quot;P.page&quot; srcfile = &quot;A6790GEtoeuenvhch06.xml#ch06se010402&quot;/&gt;</Tag>)",Translated
 1296,Function,Functie,Translated
 1297,Customized setting,Aangepaste instelling,Translated
-1298,"Switching between outside air and recirculated air mode linked to “<Tag pos=""Point"" x=""2"" type=""Inline"">&lt;function&gt;AUTO&lt;/function&gt;</Tag>” switch operation","Switching between outside air and recirculated air mode linked to “<Tag pos=""Point"" x=""2"" type=""Inline"">&lt;function&gt;AUTO&lt;/function&gt;</Tag>” switch operation",
-1299,*,*,
+1298,"Switching between outside air and recirculated air mode linked to “<Tag pos=""Point"" x=""2"" type=""Inline"">&lt;function&gt;AUTO&lt;/function&gt;</Tag>” switch operation","Wisselen tussen modus buitenlucht en gerecirculeerde lucht, gekoppeld aan bediening van de schakelaar “<Tag pos=""Point"" i=""1"" x=""2"" type=""Inline"">&lt;function&gt;AUTO&lt;/function&gt;</Tag>”",Translated
+1299,*,*,Translated
 1300,On,Aan,Translated
 1301,Off,Uit,Translated
 1302,O,O,Translated
-1303,"<NU x=""2"">&amp;mdash;</NU>","<NU x=""2"">&amp;mdash;</NU>",
+1303,"<NU x=""2"">&amp;mdash;</NU>","<NU x=""2"">&amp;mdash;</NU>",Translated
 1304,O,O,Translated
-1305,Switching to the outside air mode when the vehicle is parked,Switching to the outside air mode when the vehicle is parked,
-1306,*,*,
+1305,Switching to the outside air mode when the vehicle is parked,Overschakelen naar de modus buitenlucht wanneer het voertuig geparkeerd staat,Translated
+1306,*,*,Translated
 1307,On,Aan,Translated
 1308,Off,Uit,Translated
-1309,"<NU x=""2"">&amp;mdash;</NU>","<NU x=""2"">&amp;mdash;</NU>",
-1310,"<NU x=""2"">&amp;mdash;</NU>","<NU x=""2"">&amp;mdash;</NU>",
+1309,"<NU x=""2"">&amp;mdash;</NU>","<NU x=""2"">&amp;mdash;</NU>",Translated
+1310,"<NU x=""2"">&amp;mdash;</NU>","<NU x=""2"">&amp;mdash;</NU>",Translated
 1311,O,O,Translated
-1312,"A/C “<Tag pos=""Point"" x=""1"" type=""Inline"">&lt;function&gt;AUTO&lt;/function&gt;</Tag>” switch operation","A/C “<Tag pos=""Point"" x=""1"" type=""Inline"">&lt;function&gt;AUTO&lt;/function&gt;</Tag>” switch operation",
-1313,*,*,
+1312,"A/C “<Tag pos=""Point"" x=""1"" type=""Inline"">&lt;function&gt;AUTO&lt;/function&gt;</Tag>” switch operation","Werking van de airco bij gebruik van de schakelaar “<Tag pos=""Point"" i=""1"" x=""1"" type=""Inline"">&lt;function&gt;AUTO&lt;/function&gt;</Tag>”",Translated
+1313,*,*,Translated
 1314,On,Aan,Translated
 1315,Off,Uit,Translated
 1316,O,O,Translated
-1317,"<NU x=""2"">&amp;mdash;</NU>","<NU x=""2"">&amp;mdash;</NU>",
+1317,"<NU x=""2"">&amp;mdash;</NU>","<NU x=""2"">&amp;mdash;</NU>",Translated
 1318,O,O,Translated
 1319,This setting changes in accordance with My Settings.,Deze instelling verandert in overeenstemming met Mijn instellingen.,Translated
-1320,"Heated steering wheel<Tag pos=""Begin"" i=""2"" x=""2"" type=""Inline"">&lt;sup&gt;</Tag>*<Tag pos=""End"" i=""2"" type=""Inline"">&lt;/sup&gt;</Tag>/front seat heaters/seat ventilators","Heated steering wheel<Tag pos=""Begin"" i=""2"" x=""2"" type=""Inline"">&lt;sup&gt;</Tag>*<Tag pos=""End"" i=""2"" type=""Inline"">&lt;/sup&gt;</Tag>/front seat heaters/seat ventilators",
-1321,"<Tag pos=""Begin"" i=""3"" x=""3"" type=""Inline"">&lt;sup&gt;</Tag>*<Tag pos=""End"" i=""3"" type=""Inline"">&lt;/sup&gt;</Tag> (<NU x=""4"" g=""2"">&amp;rarr;</NU><Tag pos=""Point"" x=""5"" type=""InlineVariable"" g=""3"">&lt;xref type = &quot;P.page&quot; srcfile = &quot;A6790GEtoeuenvhch06.xml#ch06se010403&quot;/&gt;</Tag>)","<Tag pos=""Begin"" i=""3"" x=""3"" type=""Inline"">&lt;sup&gt;</Tag>*<Tag pos=""End"" i=""3"" type=""Inline"">&lt;/sup&gt;</Tag> (<NU x=""4"" g=""2"">&amp;rarr;</NU><Tag pos=""Point"" x=""5"" type=""InlineVariable"" g=""3"">&lt;xref type = &quot;P.page&quot; srcfile = &quot;A6790GEtoeuenvhch06.xml#ch06se010403&quot;/&gt;</Tag>)",
+1320,"Heated steering wheel<Tag pos=""Begin"" i=""2"" x=""2"" type=""Inline"">&lt;sup&gt;</Tag>*<Tag pos=""End"" i=""2"" type=""Inline"">&lt;/sup&gt;</Tag>/front seat heaters/seat ventilators","Stuurverwarming<Tag pos=""Begin"" i=""1"" x=""2"" type=""Inline"">&lt;sup&gt;</Tag>*<Tag pos=""End"" i=""1"" type=""Inline"">&lt;/sup&gt;</Tag>/stoelverwarming vóór/stoelventilatie",Translated
+1321,"<Tag pos=""Begin"" i=""3"" x=""3"" type=""Inline"">&lt;sup&gt;</Tag>*<Tag pos=""End"" i=""3"" type=""Inline"">&lt;/sup&gt;</Tag> (<NU x=""4"" g=""2"">&amp;rarr;</NU><Tag pos=""Point"" x=""5"" type=""InlineVariable"" g=""3"">&lt;xref type = &quot;P.page&quot; srcfile = &quot;A6790GEtoeuenvhch06.xml#ch06se010403&quot;/&gt;</Tag>)","<Tag pos=""Begin"" i=""3"" x=""3"" type=""Inline"">&lt;sup&gt;</Tag>*<Tag pos=""End"" i=""3"" type=""Inline"">&lt;/sup&gt;</Tag> (<NU x=""4"" g=""2"">&amp;rarr;</NU><Tag pos=""Point"" x=""5"" type=""InlineVariable"" g=""3"">&lt;xref type = &quot;P.page&quot; srcfile = &quot;A6790GEtoeuenvhch06.xml#ch06se010403&quot;/&gt;</Tag>)",Translated
 1322,Function,Functie,Translated
 1323,Customized setting,Aangepaste instelling,Translated
-1324,Steering wheel temperature preference in automatic mode,Steering wheel temperature preference in automatic mode,
-1325,-2 (cooler) to +2 (warmer),-2 (cooler) to +2 (warmer),
+1324,Steering wheel temperature preference in automatic mode,Temperatuurvoorkeur voor het stuur in de automatische modus,Translated
+1325,-2 (cooler) to +2 (warmer),-2 (koeler) t/m +2 (warmer),Translated
 1326,O,O,Translated
-1327,"<NU x=""2"">&amp;mdash;</NU>","<NU x=""2"">&amp;mdash;</NU>",
+1327,"<NU x=""2"">&amp;mdash;</NU>","<NU x=""2"">&amp;mdash;</NU>",Translated
 1328,O,O,Translated
-1329,Driver’s seat temperature preference in automatic mode,Driver’s seat temperature preference in automatic mode,
-1330,-2 (cooler) to +2 (warmer),-2 (cooler) to +2 (warmer),
+1329,Driver’s seat temperature preference in automatic mode,Temperatuurvoorkeur voor de bestuurdersstoel in de automatische modus,Translated
+1330,-2 (cooler) to +2 (warmer),-2 (koeler) t/m +2 (warmer),Translated
 1331,O,O,Translated
-1332,"<NU x=""2"">&amp;mdash;</NU>","<NU x=""2"">&amp;mdash;</NU>",
+1332,"<NU x=""2"">&amp;mdash;</NU>","<NU x=""2"">&amp;mdash;</NU>",Translated
 1333,O,O,Translated
-1334,Passenger’s seat temperature preference in automatic mode,Passenger’s seat temperature preference in automatic mode,
-1335,-2 (cooler) to +2 (warmer),-2 (cooler) to +2 (warmer),
+1334,Passenger’s seat temperature preference in automatic mode,Temperatuurvoorkeur voor de passagiersstoel in de automatische modus,Translated
+1335,-2 (cooler) to +2 (warmer),-2 (koeler) t/m +2 (warmer),Translated
 1336,O,O,Translated
-1337,"<NU x=""2"">&amp;mdash;</NU>","<NU x=""2"">&amp;mdash;</NU>",
+1337,"<NU x=""2"">&amp;mdash;</NU>","<NU x=""2"">&amp;mdash;</NU>",Translated
 1338,O,O,Translated
 1339,If equipped,Indien aanwezig,Translated
 1340,Illumination ,Verlichting ,Translated
-1341,"(<NU x=""2"" g=""2"">&amp;rarr;</NU><Tag pos=""Point"" x=""3"" type=""InlineVariable"" g=""3"">&lt;xref type = &quot;P.page&quot; srcfile = &quot;A6790GEtoeuenvhch06.xml#ch06se020401&quot; ref_em = &quot;yes&quot; ref_pm = &quot;yes&quot; ref_fullpm = &quot;yes&quot;/&gt;</Tag>)","(<NU x=""2"" g=""2"">&amp;rarr;</NU><Tag pos=""Point"" x=""3"" type=""InlineVariable"" g=""3"">&lt;xref type = &quot;P.page&quot; srcfile = &quot;A6790GEtoeuenvhch06.xml#ch06se020401&quot; ref_em = &quot;yes&quot; ref_pm = &quot;yes&quot; ref_fullpm = &quot;yes&quot;/&gt;</Tag>)",
+1341,"(<NU x=""2"" g=""2"">&amp;rarr;</NU><Tag pos=""Point"" x=""3"" type=""InlineVariable"" g=""3"">&lt;xref type = &quot;P.page&quot; srcfile = &quot;A6790GEtoeuenvhch06.xml#ch06se020401&quot; ref_em = &quot;yes&quot; ref_pm = &quot;yes&quot; ref_fullpm = &quot;yes&quot;/&gt;</Tag>)","(<NU x=""2"" g=""2"">&amp;rarr;</NU><Tag pos=""Point"" x=""3"" type=""InlineVariable"" g=""3"">&lt;xref type = &quot;P.page&quot; srcfile = &quot;A6790GEtoeuenvhch06.xml#ch06se020401&quot; ref_em = &quot;yes&quot; ref_pm = &quot;yes&quot; ref_fullpm = &quot;yes&quot;/&gt;</Tag>)",Translated
 1342,Function,Functie,Translated
 1343,Customized setting,Aangepaste instelling,Translated
-1344,Time elapsed before the interior lights turn off,Tijd waarna de interieurverlichting uit gaat,Translated
+1344,Time elapsed before the interior lights turn off,Tijd waarna de interieurverlichting uitgaat,Translated
 1345,7.5 seconds,"7,5 seconden",Translated
 1346,15 seconds,15 seconden,Translated
 1347,30 seconds,30 seconden,Translated
 1348,O,O,Translated
-1349,"<NU x=""2"">&amp;mdash;</NU>","<NU x=""2"">&amp;mdash;</NU>",
+1349,"<NU x=""2"">&amp;mdash;</NU>","<NU x=""2"">&amp;mdash;</NU>",Translated
 1350,O,O,Translated
-1351,Ambient lighting,Ambient lighting,
+1351,Ambient lighting,Sfeerverlichting,Translated
 1352,On,Aan,Translated
 1353,Off,Uit,Translated
 1354,O,O,Translated
-1355,"<NU x=""2"">&amp;mdash;</NU>","<NU x=""2"">&amp;mdash;</NU>",
+1355,"<NU x=""2"">&amp;mdash;</NU>","<NU x=""2"">&amp;mdash;</NU>",Translated
 1356,O,O,Translated
-1357,Brightness level,Brightness level,
-1358,Desired brightness,Desired brightness,
+1357,Brightness level,Helderheidsniveau,Translated
+1358,Desired brightness,Gewenste helderheid,Translated
 1359,O,O,Translated
-1360,"<NU x=""2"">&amp;mdash;</NU>","<NU x=""2"">&amp;mdash;</NU>",
+1360,"<NU x=""2"">&amp;mdash;</NU>","<NU x=""2"">&amp;mdash;</NU>",Translated
 1361,O,O,Translated
-1362,Color selection,Color selection,
-1363,Desired color,Desired color,
+1362,Color selection,Kleurkeuze,Translated
+1363,Desired color,Gewenste kleur,Translated
 1364,O,O,Translated
-1365,"<NU x=""2"">&amp;mdash;</NU>","<NU x=""2"">&amp;mdash;</NU>",
+1365,"<NU x=""2"">&amp;mdash;</NU>","<NU x=""2"">&amp;mdash;</NU>",Translated
 1366,O,O,Translated
-1367,Dynamic color,Dynamic color,
-1368,Desired theme,Desired theme,
+1367,Dynamic color,Dynamische kleur,Translated
+1368,Desired theme,Gewenst thema,Translated
 1369,O,O,Translated
-1370,"<NU x=""2"">&amp;mdash;</NU>","<NU x=""2"">&amp;mdash;</NU>",
+1370,"<NU x=""2"">&amp;mdash;</NU>","<NU x=""2"">&amp;mdash;</NU>",Translated
 1371,O,O,Translated
-1372,Function linkage illumination,Function linkage illumination,
-1373,Welcome illumination,Welcome illumination,
+1372,Function linkage illumination,Verlichting gekoppeld aan functies,Translated
+1373,Welcome illumination,Welkomstverlichting,Translated
 1374,On,Aan,Translated
 1375,Off,Uit,Translated
 1376,O,O,Translated
-1377,"<NU x=""2"">&amp;mdash;</NU>","<NU x=""2"">&amp;mdash;</NU>",
+1377,"<NU x=""2"">&amp;mdash;</NU>","<NU x=""2"">&amp;mdash;</NU>",Translated
 1378,O,O,Translated
 1379,Safe Exit Assist,Assistentie voor veilig uitstappen,Translated
 1380,On,Aan,Translated
 1381,Off,Uit,Translated
 1382,O,O,Translated
-1383,"<NU x=""2"">&amp;mdash;</NU>","<NU x=""2"">&amp;mdash;</NU>",
+1383,"<NU x=""2"">&amp;mdash;</NU>","<NU x=""2"">&amp;mdash;</NU>",Translated
 1384,O,O,Translated
 1385,Drive mode,Drive mode,
 1386,On,Aan,Translated
