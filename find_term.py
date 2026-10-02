@@ -16,10 +16,13 @@ curly vs straight quotes, soft hyphens, hyphen/dash variants.
 Usage:
   python find_term.py VGGTs --root "P:\\manuscripts"
   python find_term.py VGGT --loose --root manuscripts       # VGGT, VGGTs, VGGT's
+  python find_term.py VGGT --types xlsx --root manuscripts         # XLSX files only
   python find_term.py VGGT "foundation model" --root manuscripts   # several terms at once
   python find_term.py VGGT --root manuscripts --csv hits.csv       # full hit list for Excel
 
 Options:
+  --types LIST       only search these file types, e.g. --types xlsx  or  --types docx,xlsx
+                     (default: docx,xlsx,csv,tsv,md)
   --case             case-sensitive (default: case-insensitive)
   --substring        also match inside longer words (default: whole word only)
   --loose            allow a trailing s / 's after the term
@@ -190,12 +193,15 @@ def group_of(root, path):
 def scan(args):
     patterns = [(t, build_pattern(t, args)) for t in args.terms]
     hits = []                       # dicts: group, file, location, term, snippet
-    files_per_group = {}
+    files_per_group = {d: 0 for d in sorted(os.listdir(args.root))      # list every folder, even
+                       if os.path.isdir(os.path.join(args.root, d)) and not d.startswith('.')}  # with 0 files searched
     skipped, errors = {}, []
 
     for path in iter_files(args.root):
         ext = os.path.splitext(path)[1].lower()
         group = group_of(args.root, path)
+        if ext.lstrip('.') not in args.types_set and ext in READERS:
+            continue                # supported type, but not requested via --types
         if ext not in READERS:
             skipped[ext or '(none)'] = skipped.get(ext or '(none)', 0) + 1
             continue
@@ -268,6 +274,8 @@ def main():
     p = argparse.ArgumentParser(description="Find words/acronyms across DOCX, XLSX, CSV, TSV and MD files")
     p.add_argument('terms', nargs='+', help='word(s) or acronym(s) to look for')
     p.add_argument('--root', default='.', help='folder that contains the project folders (default: current)')
+    p.add_argument('--types', default='docx,xlsx,csv,tsv,md',
+                   help='comma-separated file types to search (default: docx,xlsx,csv,tsv,md)')
     p.add_argument('--case', action='store_true', help='case-sensitive')
     p.add_argument('--substring', action='store_true', help='match inside longer words too')
     p.add_argument('--loose', action='store_true', help="allow trailing s / 's")
@@ -277,6 +285,12 @@ def main():
     p.add_argument('--width', type=int, default=40, help='context characters either side')
     p.add_argument('--csv', help='write every hit to this CSV file')
     args = p.parse_args()
+
+    args.types_set = {t.strip().lower().lstrip('.*') for t in args.types.replace(' ', ',').split(',') if t.strip()}
+    unknown = args.types_set - {e.lstrip('.') for e in READERS}
+    if unknown:
+        print(f'ERROR: unsupported type(s): {", ".join(sorted(unknown))} (choose from docx, xlsx, csv, tsv, md)')
+        sys.exit(2)
 
     if not os.path.isdir(args.root):
         print(f'ERROR: folder not found: {args.root}')
