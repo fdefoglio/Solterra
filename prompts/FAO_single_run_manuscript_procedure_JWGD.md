@@ -8,9 +8,9 @@ This prompt replaces the two earlier prompts `FAO_pronouns_headings_crossref_con
 |---|---|---|
 | `{{REF}}` | Job reference number | REF1790868738 |
 | `{{Pn}}` | Manuscript code | P3 |
-| `{{LABELLED_MD}}` | Labelled markdown export (editor_tool v2 form: `[N]` paragraph labels, `[SPECIAL]` tags, `[^N]` footnotes, References section). Needed for the paragraph-level CSV and for label mapping | `P3_final_FAO_edited_refs_rectified.md` |
+| `{{LABELLED_MD}}` | Labelled markdown export (editor_tool form: `[N]` paragraph labels, `⟦N\|…⟧` tokens, `[SPECIAL]` tags, `[^N]` footnotes, References section). Needed for the paragraph-level CSV and for label mapping. Preferably the review export of the final DOCX (`editor_tool.py --export --review`), which also carries page numbers, tables and a table/figure inventory, so `{{DOCX}}` is not needed | `REF…_P3_final_for_review.md` |
 | `{{MD}}` | `_final_Edited.md` conversion of the final DOCX. The editor searches and replaces in this text. If `{{LABELLED_MD}}` is the only markdown attached, use it for both roles | `REF…_P3_final_Edited.md` |
-| `{{DOCX}}` | The DOCX the markdown was converted from. Used for page numbers and the table inventory only | `REF…_P3_final.docx` |
+| `{{DOCX}}` | The DOCX the markdown was converted from. Used for page numbers and the table inventory only, so attach it only when `{{LABELLED_MD}}` is not a review export | `REF…_P3_final.docx` |
 | `{{SHEET}}` | Editor's comment sheet (TSV/CSV/XLSX/paste; columns such as `#`, `Position` or `Page`, `Issue`, `Comment`). Optional | `Comments_sheet_P3.tsv` |
 | `{{OUT}}` | Output folder | `/home/claude/out/` |
 
@@ -23,7 +23,7 @@ Process manuscript `{{Pn}}` (`{{REF}}`) in one run, from intake to delivery, and
 **Inputs**
 
 1. `{{LABELLED_MD}}` and/or `{{MD}}` as described above.
-2. `{{DOCX}}` – page numbers (`w:lastRenderedPageBreak`) and confirmation that tables exist.
+2. Page numbers and the table/figure inventory: from the review export (`<!-- page N -->` lines, `TABLE` blocks, `INVENTORY` block), or, if `{{LABELLED_MD}}` is not a review export, from `{{DOCX}}` (`w:lastRenderedPageBreak`).
 3. `{{SHEET}}` – optional. It may use `[n]` labels instead of page numbers, and it may be stale against the current file.
 4. Project files: `house-style.md`, `citations-rules.md` (142 FAOSTYLE rules), `cb8081en.pdf` (FAOSTYLE English, Nov 2024), `conflicts.md`, `recommended-words.md`, `fao_termlist.json`, `nocs_lookup.json`.
 
@@ -31,8 +31,8 @@ Process manuscript `{{Pn}}` (`{{REF}}`) in one run, from intake to delivery, and
 
 1. **Intake and preflight.**
    - Record a checksum or modification time for every source file.
-   - Locate the References boundary, the footnotes, and `[SPECIAL]` lines in `{{LABELLED_MD}}`.
-   - Build the paragraph-to-page map from `{{DOCX}}` and the inventory of tables and figures.
+   - Locate the References boundary, the footnotes, `[SPECIAL]` lines and `⟦N|…⟧` tokens in `{{LABELLED_MD}}`.
+   - Build the paragraph-to-page map and the inventory of tables and figures: from the review export if it is one, otherwise from `{{DOCX}}`.
    - If `{{SHEET}}` is attached, parse every row and map each `[n]` label to a paragraph by text match.
    - State at once any missing input and what it limits (G20).
 2. **Detection scans** (read-only; findings only, no corrections yet). Give every finding an ID, a paragraph label, the quoted text and the rule.
@@ -66,7 +66,7 @@ Process manuscript `{{Pn}}` (`{{REF}}`) in one run, from intake to delivery, and
 
 ### G1. Invariants
 - No source file is modified, in whole or in part. All proposed changes go into the output files.
-- Paragraph labels `[N]`, `[SPECIAL]` tags, `[^N]` footnote labels and markdown prefixes (`#`, `##`, `###`) are copied exactly as they appear. A label that moves or changes breaks the import.
+- Paragraph labels `[N]`, `[SPECIAL]` tags, `[^N]` footnote labels, `⟦N|…⟧` tokens and markdown prefixes (`#`, `##`, `###`) are copied exactly as they appear. A label that moves or changes breaks the import, and the importer refuses a paragraph whose tokens were dropped, duplicated or altered.
 - Quoted text, titles, names and numbers are copied from the markdown, not retyped from memory.
 - Never invent or silently supply reference data. If a value is needed and the document does not contain it, it becomes an author query. If the editor could verify it from a trustworthy source, mark it `Apply – verify` and say what to check.
 - Never add a reference entry on the author's behalf.
@@ -75,8 +75,9 @@ Process manuscript `{{Pn}}` (`{{REF}}`) in one run, from intake to delivery, and
 ### G2. Positions, labels and page numbers
 - Working files (cross-reference report, scan notes, basis file) report each position as the paragraph label read from the line prefix (`[N]`, `[^N]`). Never report a file line number. The author sheet and the editor action list report page numbers (see below), with no `[n]` label.
 - Read the References boundary from the first line matching `[N] #+ References`. Treat a following line with no `[N]` prefix (for example a wrapped URL) as part of the previous entry.
-- Lines tagged `[SPECIAL]` are scanned. If a fix lands in one, mark it manual in Word, because the importer skips those lines. A citation inside a Word field may also be invisible in the export; say so in the notes.
-- Page of a paragraph = the page on which its first non-empty text segment starts, from `w:lastRenderedPageBreak` markers in `{{DOCX}}` (a marker at the very start of a paragraph means the paragraph begins on the next page). A LibreOffice PDF render is a cross-check only.
+- Lines tagged `[SPECIAL]` are scanned. If a fix lands in one, mark it manual in Word, because the importer skips those lines.
+- A `⟦N|…⟧` token is a live Word object: a reference-manager citation, cross-reference, caption number, image, chart or equation. Its label shows the text Word displays and may be cut short with `…`. Scan citation tokens like any in-text citation. If a fix lands inside a token, it cannot be made through the markdown: list it in the editor action list as a manual Word task (for a reference-manager citation, correct the record and refresh).
+- Page of a paragraph = the page on which its first non-empty text segment starts. In a review export it is given by the nearest `<!-- page N -->` line above the paragraph; otherwise read it from the `w:lastRenderedPageBreak` markers in `{{DOCX}}` (a marker at the very start of a paragraph means the paragraph begins on the next page). Both reflect Word's last layout of the file. If the review export says `NO PAGE INFORMATION`, ask for the DOCX opened and saved in Word, re-exported. A LibreOffice PDF render is a cross-check only.
 - If the DOCX appears to have been repaginated after the comment sheet was written, say so and flag the page column for remapping.
 - Label-to-paragraph mapping: map `[n]` labels in the sheet to paragraphs through `{{LABELLED_MD}}` or the DOCX paragraph order, and confirm by matching the comment's quoted text to the paragraph. When a label and the text disagree, the text wins; state the discrepancy.
 
@@ -122,7 +123,7 @@ Applies to every sheet row and every scan finding.
 - Parse parenthetical groups, split on semicolons, and handle leading "e.g.", "see", "cf.". Parse narrative forms "Author (year)" and "Author and Author (year)". Handle "et al." (italic or not), "n.d.", "forthcoming", a/b/c suffixes, pinpoints ("p. 73", "1958: 97–99") and personal communications.
 - Strip leading sentence openers from narrative matches ("As Gómez and Graziano da Silva (2025)").
 - A year on its own, a year range or a date in parentheses is not a citation: "(2012–2024)", "(approved in 2016)", "(from December 2020 to April 2025)".
-- Scan footnotes, notes, tables, figures and boxes as well as body text, and note any footnote with an anchor but no text.
+- Scan footnotes, notes, tables (the `TABLE` blocks of a review export), figures, boxes and token labels as well as body text, and note any footnote with an anchor but no text.
 - After the pattern scan, search the body for four-digit years that no pattern captured. Read each in context to catch citations in unusual forms.
 
 ### G9. Matching citations to entries (2b)
@@ -184,7 +185,7 @@ Applies to every sheet row and every scan finding.
 - An expansion that the manuscript never gives is not editor-resolvable: mark `Apply – verify` or send to the author.
 
 ### G15. Tables and figures (2c)
-- Confirm in `{{DOCX}}` which tables and figures exist; the markdown export can drop them.
+- Confirm which tables and figures exist from the `INVENTORY` block of a review export, or from `{{DOCX}}` if no review export is attached. A plain export does not contain tables.
 - Every table needs a number and a caption and must be referred to by number in the narrative. A table without a caption, or never mentioned in the text, is an **author** query (the author supplies the caption and decides where it is discussed) and, once the number is known, an **editor** cross-reference fix (HOLD until the author answers).
 - Confirm a "not referenced" finding by searching the narrative for the table number and for descriptive mentions.
 
@@ -197,6 +198,7 @@ Applies to every sheet row and every scan finding.
 **`{{Pn}}_editor_changes.csv`**
 - Exactly two columns, header `current,to_replace`; all fields quoted.
 - Every `current` string occurs in `{{MD}}` as written, long enough to be unique where possible. For a deliberate replace-all, state the occurrence count in the basis file.
+- A `current` string never contains a `⟦N|…⟧` token or text from a comment line (`page`, `TABLE`, `INVENTORY`), because that text is not in the document's paragraphs. If a change falls inside a token or a table, list it in the editor action list as a manual Word task instead.
 - Verification: normalize the markdown (remove `**` and `~~`; `\[`→`[`, `\]`→`]`, `\_`→`_`, `\.`→`.`), then count each `current` string. A count of 0, or one that does not match the intended number, is fixed before delivery.
 - Deleting a struck or duplicate entry: `current` is the entry text without the strike markers; `to_replace` is empty.
 - Moving an entry to Further reading: one row to delete it from References and one to insert it in Further reading, or a clear note in the basis file when the insertion point has to be made by hand.
@@ -217,7 +219,7 @@ Applies to every sheet row and every scan finding.
 - Re-open every file written. Check row and column counts, quoting, no truncated cell, every sentence ends, `#` values consecutive, internal cross-references match, and the XLSX opens with wrapped cells.
 - Confirm each flag by reading both places in the manuscript (the citation and the entry, or the sentence and the heading). Pattern matching alone produces false positives (abbreviation-keyed entries such as TAWLA, "Phase I", quoted titles).
 - For every statement that a source is "not cited" or "missing", search the body again with accents removed and with the author's name alone.
-- Re-count every `current` string in the markdown. Sample-check at least five page numbers against the DOCX, plus every page that has more than one comment.
+- Re-count every `current` string in the markdown. If `{{DOCX}}` is attached, sample-check at least five page numbers against it, plus every page that has more than one comment. If the page numbers come from a review export, state in the chat summary that they reflect Word's last layout of the file.
 - Re-run the pronoun scan on the replacement column of `{{Pn}}.csv` and confirm that no pronoun, over-length sentence or over-8-percent drift remains in a body paragraph.
 - Confirm that each source file is unchanged (checksum or modification time).
 - Anything not verifiable is listed as an open check item, never reported as done.
@@ -226,7 +228,7 @@ Applies to every sheet row and every scan finding.
 - Author-facing sheet: TSV (UTF-8, tab-separated, one row per comment) plus an XLSX copy with wrapped cells and sensible column widths. Some viewers and pastes cut cells at about 250 characters, so the XLSX is part of the delivery.
 - Write files to `{{OUT}}` with consistent names. If a file from an earlier run exists, add `_v2` instead of overwriting.
 - Keep tool names, regex patterns and internal machinery out of the files the author and editor receive.
-- If an input is missing (no DOCX, no `{{MD}}`, no `References` heading, no `[N]` labels), say so first, deliver what can be done, and mark the dependent column or file pending.
+- If an input is missing (no page information from either a review export or a DOCX, no `{{MD}}`, no `References` heading, no `[N]` labels), say so first, deliver what can be done, and mark the dependent column or file pending.
 - Work out ambiguities from the files. Ask the user only when a wrong guess is costly and the inputs cannot settle it, for example when the sheet and the manuscript are clearly different versions.
 - If this prompt conflicts with a project rule, follow `conflicts.md`. If the rule is silent, state the assumption in the basis file or report notes.
 
@@ -256,7 +258,7 @@ Applies to every sheet row and every scan finding.
 4. Every original sheet row is accounted for. The author sheet has no editor action, no `[n]` label, no internal reference, no truncated comment, and no query the editor could settle alone.
 5. Every `current` string is present in the markdown the stated number of times; no row introduces a spelling or style inconsistency of its own, and no row conflicts with `{{Pn}}.csv`.
 6. No reference data was invented. Every open value is an author query or a `verify` item.
-7. Report positions are paragraph labels; author-sheet and editor-list positions are page numbers from the DOCX, with any doubt about repagination stated.
+7. Report positions are paragraph labels; author-sheet and editor-list positions are page numbers from the review export or the DOCX, with any doubt about repagination stated.
 8. All files were re-opened and checked, and every source file is unchanged.
 
 **Chat summary** (short, in this order; for several manuscripts, one block per manuscript)

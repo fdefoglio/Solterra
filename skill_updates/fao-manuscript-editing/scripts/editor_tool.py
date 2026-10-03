@@ -49,6 +49,11 @@ Usage
     python editor_tool.py --export my_document.docx
     python editor_tool.py --import my_document_for_ai.md my_document.docx
 
+    # Review copy of a finished DOCX: same labels and tokens, plus page numbers,
+    # tables and a figure/table inventory as read-only comments. Lets a review
+    # run on the Markdown alone instead of on the attached DOCX.
+    python editor_tool.py --export --review my_document.docx   # -> my_document_for_review.md
+
 On import the new file is saved as my_document_v1.docx, _v2.docx, ... so
 nothing is overwritten.
 """
@@ -76,6 +81,8 @@ from docx.text.run import Run
 W_NS = 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'
 M_NS = 'http://schemas.openxmlformats.org/officeDocument/2006/math'
 R_NS = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships'
+A_GRAPHIC_DATA = '{http://schemas.openxmlformats.org/drawingml/2006/main}graphicData'
+WP_DOCPR = '{http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing}docPr'
 XML_SPACE = '{http://www.w3.org/XML/1998/namespace}space'
 
 
@@ -393,7 +400,23 @@ def token_label(elems):
     text = ''.join(t.text or '' for e in elems for t in e.iter(W_T))
     tags = {x.tag for e in elems for x in e.iter() if isinstance(x.tag, str)}
     if tags & {w('drawing'), w('pict'), w('object')}:
-        return _clean_label('image' + (': ' + text if text.strip() else ''))
+        uris = ' '.join(g.get('uri', '') for e in elems for g in e.iter(A_GRAPHIC_DATA))
+        if 'chart' in uris:
+            kind = 'chart'
+        elif 'diagram' in uris:
+            kind = 'diagram'
+        elif w('txbxContent') in tags:
+            kind = 'text box'
+        elif 'wordprocessingShape' in uris or 'wordprocessingGroup' in uris:
+            kind = 'shape'
+        elif w('object') in tags:
+            kind = 'embedded object'
+        else:
+            kind = 'image'
+        alt = next((d.get('descr') or d.get('title') for e in elems for d in e.iter(WP_DOCPR)
+                    if d.get('descr') or d.get('title')), '')
+        detail = text.strip() or alt
+        return _clean_label(kind + (': ' + detail if detail else ''))
     if tags & {'{%s}oMath' % M_NS, '{%s}oMathPara' % M_NS}:
         return 'equation'
     if text.strip():
@@ -983,14 +1006,77 @@ def scan_document(doc, fn_root, legacy=False):
 
 
 # ---------------------------------------------------------------------------
+# Review export: page numbers, tables, figures (read-only context)
+# ---------------------------------------------------------------------------
+
+OBJECT_KINDS = ('image', 'chart', 'diagram', 'text box', 'shape', 'embedded object')
+
+
+def page_layout(doc):
+    """
+    Pages as Word last laid the document out, from its w:lastRenderedPageBreak
+    markers. Returns (page of each body paragraph or None when the file holds
+    no page information, [(index of the paragraph before, page, <w:tbl>)]).
+    A paragraph's page is where its first text starts.
+    """
+    lrpb = w('lastRenderedPageBreak')
+    page, para_pages, tables, found, pi = 1, [], [], False, -1
+    for child in doc.element.body:
+        if child.tag not in (W_P, w('tbl')):
+            page += sum(1 for _ in child.iter(lrpb))
+            continue
+        before, total, seen_text = 0, 0, False
+        for el in child.iter(lrpb, W_T):
+            if el.tag == lrpb:
+                total += 1
+                if not seen_text:
+                    before += 1
+            elif (el.text or '').strip():
+                seen_text = True
+        found = found or total > 0
+        if child.tag == W_P:
+            pi += 1
+            para_pages.append(page + before)
+        else:
+            tables.append((pi, page + before, child))
+        page += total
+    return (para_pages if found else None), tables
+
+
+def _cell_text(el, escape=True):
+    paras = [''.join(t.text or '' for t in p.iter(W_T)).strip() for p in el.iter(W_P)]
+    text = ' / '.join(p for p in paras if p).replace('-->', '\u2014>').replace('\n', ' ')
+    return text.replace('|', '\\|') if escape else text
+
+
+def table_to_md(tbl):
+    rows = []
+    for tr in tbl.findall(w('tr')):
+        cells = []
+        for tc in tr.findall(w('tc')):
+            cells.append(_cell_text(tc))
+            span = tc.find(w('tcPr') + '/' + w('gridSpan'))
+            if span is not None and (span.get(w('val')) or '1').isdigit():
+                cells.extend([''] * (int(span.get(w('val'))) - 1))
+        rows.append(cells)
+    if not rows:
+        return []
+    width = max(len(r) for r in rows) or 1
+    rows = [r + [''] * (width - len(r)) for r in rows]
+    out = ['| ' + ' | '.join(rows[0]) + ' |', '|' + ' --- |' * width]
+    out += ['| ' + ' | '.join(r) + ' |' for r in rows[1:]]
+    return out
+
+
+# ---------------------------------------------------------------------------
 # EXPORT
 # ---------------------------------------------------------------------------
 
-def export_to_labeled_md(docx_path):
+def export_to_labeled_md(docx_path, review=False):
     try:
         doc = Document(docx_path)
         base = os.path.splitext(docx_path)[0]
-        md_path = f"{base}_for_ai.md"
+        md_path = f"{base}_for_review.md" if review else f"{base}_for_ai.md"
 
         # Never silently overwrite an MD that may contain edits
         if os.path.exists(md_path):
@@ -1011,7 +1097,34 @@ def export_to_labeled_md(docx_path):
         lines.append("<!-- Lines tagged [SPECIAL] (tables of contents, lists of tables/figures)")
         lines.append("     are left untouched on import. -->")
         lines.append("<!-- Footnote references appear inline as [^N]; their text is listed at the bottom. -->")
+
+        pages, tables = page_layout(doc) if review else (None, [])
+        if review:
+            lines.append("<!-- REVIEW EXPORT. 'page N' comment lines give the page on which the next")
+            lines.append("     paragraph starts, as Word last laid the document out. TABLE blocks show")
+            lines.append("     table text for context only: they are not imported, so table edits are")
+            lines.append("     made in Word. The INVENTORY at the end lists tables, figures and other objects.")
+            lines.append("     Paragraph labels and tokens are the same as in a normal export. -->")
+            if pages is None:
+                lines.append("<!-- NO PAGE INFORMATION: this DOCX was last saved by a program other than")
+                lines.append("     Word. Open and save it in Word, then export again for page numbers. -->")
         lines.append("")
+
+        tables_after = {}
+        for n, (after, tpage, tbl) in enumerate(tables, 1):
+            tables_after.setdefault(after, []).append((n, tpage, tbl))
+
+        def emit_tables(after):
+            for n, tpage, tbl in tables_after.get(after, ()):
+                where = (f"page {tpage}, " if pages else "") + \
+                        (f"after [{after}]" if after >= 0 else "before [0]")
+                lines.append(f"<!-- TABLE {n} ({where}) - read-only, not imported")
+                lines.extend(table_to_md(tbl))
+                lines.append("-->")
+                lines.append("")
+
+        emit_tables(-1)
+        last_page = None
 
         special = tokens = 0
         for i, para in enumerate(paras):
@@ -1033,8 +1146,13 @@ def export_to_labeled_md(docx_path):
             if not body.strip():
                 body = "[Empty Paragraph]"
 
+            if pages and pages[i] != last_page:
+                lines.append(f"<!-- page {pages[i]} -->")
+                lines.append("")
+                last_page = pages[i]
             lines.append(f"[{i}] {tag}{body}")
             lines.append("")
+            emit_tables(i)
 
         if ctx.fn_seq_map:
             lines.append("<!-- FOOTNOTES -->")
@@ -1050,12 +1168,45 @@ def export_to_labeled_md(docx_path):
                 lines.append(f"[^{seq}]: {text}")
                 lines.append("")
 
+        if review:
+            objects = []
+            for i, model in enumerate(models):
+                for it in (model.items if model is not None else ()):
+                    if isinstance(it, TokItem) and it.label.startswith(OBJECT_KINDS):
+                        objects.append((f"⟦{it.sym[1]}⟧", it.label, f"[{i}]", i))
+                if model is None and any(True for _ in paras[i]._p.iter(w('drawing'), w('pict'))):
+                    objects.append(("-", "object in a [SPECIAL] paragraph", f"[{i}]", i))
+            lines.append("")
+            lines.append("<!-- INVENTORY (read-only, from the DOCX)")
+            lines.append(f"Tables: {len(tables)}")
+            if tables:
+                lines.append("| Table | Page | Position | First row |")
+                lines.append("| --- | --- | --- | --- |")
+                for n, (after, tpage, tbl) in enumerate(tables, 1):
+                    first = tbl.find(w('tr'))
+                    first = _clean_label(' / '.join(_cell_text(tc, escape=False).replace('|', '/')
+                                                    for tc in first.findall(w('tc'))), 80) \
+                        if first is not None else ''
+                    pos = f"after [{after}]" if after >= 0 else "before [0]"
+                    lines.append(f"| {n} | {tpage if pages else '?'} | {pos} | {first.replace('|', '/')} |")
+            lines.append(f"Figures and other objects: {len(objects)}")
+            if objects:
+                lines.append("| Token | Kind | Paragraph | Page |")
+                lines.append("| --- | --- | --- | --- |")
+                for tok, label, para, i in objects:
+                    lines.append(f"| {tok} | {label.replace('|', '/')} | {para} | {pages[i] if pages else '?'} |")
+            lines.append("-->")
+            lines.append("")
+
         with open(md_path, 'w', encoding='utf-8') as f:
             f.write('\n'.join(lines))
 
         print(f"✅ Export complete: {md_path}")
         print(f"   Paragraphs: {len(paras)}, Footnotes: {len(ctx.fn_seq_map)}, "
               f"protected tokens: {tokens}, [SPECIAL]: {special}")
+        if review:
+            print(f"   Pages: {max(pages) if pages else 'no page information (save the DOCX in Word first)'}, "
+                  f"tables: {len(tables)}")
     except Exception:
         import traceback; traceback.print_exc()
 
@@ -1221,10 +1372,15 @@ def main():
     group.add_argument('--import', dest='import_file', metavar='RESPONSE',
                        help='Import AI-edited Markdown back into a new DOCX')
     parser.add_argument('docx', help='Source Word document (.docx)')
+    parser.add_argument('--review', action='store_true',
+                        help='with --export: also write page numbers, tables and a figure/table '
+                             'inventory as read-only comments (<name>_for_review.md)')
 
     args = parser.parse_args()
+    if args.review and not args.export:
+        parser.error('--review only works with --export')
     if args.export:
-        export_to_labeled_md(args.docx)
+        export_to_labeled_md(args.docx, review=args.review)
     elif args.import_file:
         import_ai_edits(args.docx, args.import_file)
 
