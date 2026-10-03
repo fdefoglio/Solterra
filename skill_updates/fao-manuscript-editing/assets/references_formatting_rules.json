@@ -1,0 +1,305 @@
+{
+  "instruction_file": "fao_reference_formatting",
+  "version": "2026-08-11",
+  "source_reference": "cb8081en.pdf FAOSTYLE §12.6–12.8 (pp. 56–60); project citations-rules.md rules 54–138; exemplar: References_e76e2b681_CORRECTED.md (client-supplied example of accepted FAO formatting)",
+  "applies_to": "reference/bibliography lists in the author–date citation system",
+  "precedence_note": "These rules implement FAOSTYLE §12.6–12.8 and rank per conflicts.md precedence: preset locks > client_override rules > FAOSTYLE > schema > termlist > OED. No rule here currently carries client_override.",
+  "constraints": {
+    "label_integrity": "Entry text under an [n] label may change freely; never add/renumber/reorder/delete labels. Re-sorting is done by label-preserving text swaps or deferred to DOCX stage.",
+    "quoted_material": "Titles are rendered as published except where rule REF-CASE-001 applies; transliterated/translated titles follow Box 12.1.",
+    "locked_mode": "Reformatting entries is an editorial fix (skill: 'reference-list formatting and ordering'); does not require author action unless a decision_point applies."
+  },
+  "rules": [
+    {
+      "id": "REF-STRUCT-001",
+      "category": "structure",
+      "severity": "critical",
+      "rule": "Element order for all entries: Author. Year. Title. Series title, Series number. Place, Publisher. URL",
+      "transcribed_rule": "54, 98, 99",
+      "faostyle": "§12.8 templates (p. 58)",
+      "example": "Baltzer, K. & Hansen, H. 2011. Agricultural input subsidies in sub-Saharan Africa. Evaluation study. Copenhagen, DANIDA. https://... Internal document."
+    },
+    {
+      "id": "REF-SORT-001",
+      "category": "ordering",
+      "severity": "critical",
+      "rule": "Alphabetical by author surname; corporate authors alphabetized by their abbreviation with the full name made available in parentheses at first use",
+      "transcribed_rule": "57, 64",
+      "faostyle": "§12.6 (p. 56)",
+      "example": "ICAO (International Civil Aviation Organization). 2017. ... ; ICAO. 2020. ..."
+    },
+    {
+      "id": "REF-AUTH-001",
+      "category": "authors",
+      "severity": "high",
+      "rule": "More than ten authors: list first seven, remainder optionally truncated with et al.",
+      "transcribed_rule": "65",
+      "faostyle": "§12.6"
+    },
+    {
+      "id": "REF-AUTH-002",
+      "category": "authors",
+      "severity": "medium",
+      "rule": "'and' or ampersand (&) between the last two author names in each reference; FAOSTYLE examples consistently use '&'. Ampersand is banned in in-text citations (rule 23).",
+      "transcribed_rule": "66, 23",
+      "faostyle": "§12.6",
+      "default": "& in reference list; 'and' in text",
+      "decision_point": "DP-1"
+    },
+    {
+      "id": "REF-AUTH-003",
+      "category": "authors",
+      "severity": "medium",
+      "rule": "Bold mandatory for author names only. Wrap the entire author string in bold up to and including the period after the final author name: **Author, A.B. & Author, C.D.** Year. ...",
+      "transcribed_rule": "71",
+      "faostyle": "§12.6",
+      "default": "applied"
+    },
+    {
+      "id": "REF-CASE-001",
+      "category": "capitalization",
+      "severity": "high",
+      "rule": "Titles of FAO information products use sentence case (initial letter plus proper names); meetings, official days/years, projects and conferences take initial capitalization",
+      "transcribed_rule": "69, 70",
+      "faostyle": "§12.6; §8.1",
+      "note": "Applies to published titles too, e.g. 'Securing Africa's Land for Shared Prosperity' -> 'Securing Africa's land for shared prosperity'",
+      "decision_point": "DP-2"
+    },
+    {
+      "id": "REF-ITAL-001",
+      "category": "emphasis",
+      "severity": "high",
+      "rule": "Italicize titles of books, journals, papers, periodicals and websites, including foreign-language titles",
+      "transcribed_rule": "67",
+      "faostyle": "§12.6"
+    },
+    {
+      "id": "REF-ITAL-002",
+      "category": "emphasis",
+      "severity": "high",
+      "rule": "Do NOT italicize titles of articles, presentations and chapters, including foreign-language titles",
+      "transcribed_rule": "68",
+      "faostyle": "§12.6"
+    },
+    {
+      "id": "REF-PUB-001",
+      "category": "place_publisher",
+      "severity": "critical",
+      "rule": "City (and country) of publication come BEFORE the publisher; omit the country when the city is a capital",
+      "transcribed_rule": "72",
+      "faostyle": "§12.6",
+      "example": "Montreal, Canada, ICAO. / Ankara, FAO."
+    },
+    {
+      "id": "REF-PUB-002",
+      "category": "place_publisher",
+      "severity": "high",
+      "rule": "USA and UK may be abbreviated in references; omit all other administrative detail except 'Washington, DC'",
+      "transcribed_rule": "73, 74",
+      "faostyle": "§12.6",
+      "example": "Washington, DC, World Bank."
+    },
+    {
+      "id": "REF-PUB-003",
+      "category": "place_publisher",
+      "severity": "medium",
+      "rule": "Multiple locations: one location per publisher; otherwise single location with multiple publishers",
+      "transcribed_rule": "75, 126",
+      "faostyle": "§12.6",
+      "example": "Rome, FAO & Quebec City, Canada, CINE / Cairo, FAO, CIRAD & CIHEAM."
+    },
+    {
+      "id": "REF-JRN-001",
+      "category": "journal",
+      "severity": "high",
+      "rule": "Journal format: Journal Title, volume(issue): pages. No 'vol.', 'no.', 'pp.'; article numbers replace page ranges where used by the journal",
+      "transcribed_rule": "—",
+      "faostyle": "§12.8.1 examples (pp. 59–60)",
+      "example": "Society and Natural Resources, 16(3): 249–263. / Land Use Policy, 120: 106255."
+    },
+    {
+      "id": "REF-JRN-002",
+      "category": "journal",
+      "severity": "medium",
+      "rule": "Journal titles either full or standard-abbreviated in ALL entries — never mixed",
+      "transcribed_rule": "87",
+      "faostyle": "§12.6",
+      "default": "full titles"
+    },
+    {
+      "id": "REF-DOI-001",
+      "category": "locator",
+      "severity": "high",
+      "rule": "Provide the DOI as a URL; otherwise the preview page (FAO Knowledge Repository handle URL); otherwise a direct URL. No angled brackets; include http(s)://; underlining optional",
+      "transcribed_rule": "77, 78, 79, 80",
+      "faostyle": "§12.6",
+      "example": "https://doi.org/10.3389/past.2025.14918"
+    },
+    {
+      "id": "REF-WEB-001",
+      "category": "locator",
+      "severity": "high",
+      "rule": "Web sources: access date in square brackets before the URL, format [Cited DD Month YYYY]; databases use [Accessed on DD Month YYYY] plus Licence where applicable",
+      "transcribed_rule": "83, 84, 111",
+      "faostyle": "§12.6"
+    },
+    {
+      "id": "REF-WEB-002",
+      "category": "locator",
+      "severity": "medium",
+      "rule": "Static sources (PDFs, DOIs) may omit the cited date",
+      "transcribed_rule": "86",
+      "faostyle": "§12.6"
+    },
+    {
+      "id": "REF-WEB-003",
+      "category": "webpage",
+      "severity": "medium",
+      "rule": "Web page within a website: after the piece title, 'In: Website identity.' Place. [Cited date]. URL",
+      "transcribed_rule": "82, 100",
+      "faostyle": "§12.6",
+      "example": "World Bank. 2019. Understanding poverty. In: The World Bank. Washington, DC. [Cited 3 April 2019]. www.worldbank.org/..."
+    },
+    {
+      "id": "REF-LEG-001",
+      "category": "legislation",
+      "severity": "high",
+      "rule": "National/supranational legislation: Country. Name of legislation, date. Codes. Optional 'Also available at: [FAOLEX URL]'. Country acts as author, so in-text citations use the country name",
+      "transcribed_rule": "104, 135",
+      "faostyle": "§12.8 template (p. 58)",
+      "example": "Kenya. 2016. Community Land Act, No. 27 of 2016. Nairobi, Government Printer.",
+      "decision_point": "DP-3"
+    },
+    {
+      "id": "REF-YEAR-001",
+      "category": "year",
+      "severity": "medium",
+      "rule": "Same author, same year: suffix a, b (e.g. FAO. 2021a / 2021b); unpublished at time of writing: 'forthcoming' in both text and list",
+      "transcribed_rule": "76, 88–97",
+      "faostyle": "§12.6"
+    },
+    {
+      "id": "REF-LIST-001",
+      "category": "structure",
+      "severity": "medium",
+      "rule": "List title 'References' when all entries are cited; 'Bibliography' with subsections 'References' + 'Further reading' when uncited entries are retained; subsections permitted in heavily cited documents",
+      "transcribed_rule": "55, 56, 60, 63, 137",
+      "faostyle": "§12.6"
+    },
+    {
+      "id": "REF-NONEN-001",
+      "category": "non_english",
+      "severity": "medium",
+      "rule": "Non-English sources: prefer full version in publication language; translated title in [square brackets] after original; translation-era words (forthcoming, Cited, eds.) in the publication language",
+      "transcribed_rule": "Box 12.1",
+      "faostyle": "§12.6 Box 12.1 (p. 57)"
+    },
+    {
+      "id": "REF-CASE-002",
+      "category": "capitalization",
+      "severity": "high",
+      "rule": "First word after a colon (or en dash) in a title is capitalized",
+      "transcribed_rule": "—",
+      "faostyle": "§12.8.1 examples passim ('...fish stocks: The case...'; exemplar '...pastoral lands: Implementing...')",
+      "example": "Governing land for women and men: A technical guide..."
+    },
+    {
+      "id": "REF-CASE-003",
+      "category": "capitalization",
+      "severity": "high",
+      "rule": "Official titles functioning as proper names retain their published capitalization (e.g. the VGGT full title); REF-CASE-001 sentence case applies to ordinary descriptive titles only",
+      "transcribed_rule": "69 read with §8.1 proper-name retention",
+      "faostyle": "§8.1; exemplar line: FAO. 2012. *Voluntary Guidelines on the Responsible Governance of Tenure...*. Rome.",
+      "decision_point": "DP-2 (superseded: exemplar shows the accepted FAO practice)"
+    },
+    {
+      "id": "REF-PUB-004",
+      "category": "place_publisher",
+      "severity": "high",
+      "rule": "Omit the publisher when identical to the author ('FAO. 2012. ... Rome.', never 'Rome, FAO.'); include it when author and publisher differ",
+      "transcribed_rule": "—",
+      "faostyle": "§12.8.1 examples: all FAO-authored entries omit; 'Ruane, J.... Rome, FAO.' includes (authors ≠ FAO)"
+    }
+  ],
+  "decision_points": [
+    {
+      "id": "DP-1",
+      "question": "Ampersand vs 'and' between last two authors in the reference list",
+      "options": [
+        "& (FAOSTYLE example-consistent)",
+        "and (permitted by rule 66 wording)"
+      ],
+      "recommendation": "&",
+      "blocking": false,
+      "resolution": "RESOLVED: '&' in reference list (FAOSTYLE example-consistent; exemplar confirms)"
+    },
+    {
+      "id": "DP-2",
+      "question": "Sentence-case official titles (rule 69) — affects the VGGT title itself [63], which reads oddly in sentence case",
+      "options": [
+        "apply rule strictly",
+        "retain official title case as a proper-name exception and log a client_override"
+      ],
+      "recommendation": "apply strictly but log a one-line note in conflicts.md for the client to overrule",
+      "blocking": false,
+      "resolution": "RESOLVED 2026-08-11: exemplar file shows accepted practice — VGGT and similar official titles keep published capitalization (encoded as REF-CASE-003); sentence case + capital after colon elsewhere"
+    },
+    {
+      "id": "DP-3",
+      "question": "Legislation with country as author (REF-LEG-001) rewrites 17 in-text citations in P16 ((Republic of Kenya, 2016) -> (Kenya, 2016) etc.)",
+      "options": [
+        "apply list + in-text rewrite",
+        "reformat list entries only, keep 'Republic of ...' as author string",
+        "defer entirely to client"
+      ],
+      "recommendation": "client sign-off before applying; if approved, apply both sides in one pass to keep text and list consistent",
+      "blocking": true
+    }
+  ],
+  "application_P16_V2": {
+    "manuscript": "P16_V2[91]_for_ai.md",
+    "entries_requiring_reformat": [
+      "[56]",
+      "[57]",
+      "[58]",
+      "[59]",
+      "[60]",
+      "[62]",
+      "[63]",
+      "[64]",
+      "[65]",
+      "[66]",
+      "[67]",
+      "[68]",
+      "[69]",
+      "[70]",
+      "[72]",
+      "[73]",
+      "[74]",
+      "[75]",
+      "[76]",
+      "[77]",
+      "[78]",
+      "[79]",
+      "[80]",
+      "[81]",
+      "[83]",
+      "[84]",
+      "[85]",
+      "[86]"
+    ],
+    "systematic_fixes": {
+      "REF-PUB-001": "~22 entries",
+      "REF-ITAL-001/002": "all book/journal/website titles",
+      "REF-CASE-001": "5+ entries",
+      "REF-JRN-001": "[61],[68],[71],[79],[81],[84]",
+      "REF-SORT-001": "[66],[70],[77],[78]",
+      "REF-DOI-001": "[79]",
+      "REF-WEB-001": "[66],[69],[85] — author to supply access dates"
+    },
+    "author_action_required": [
+      "access dates/URLs for [66], [69], [85]",
+      "DP-3 sign-off (17 in-text citations)"
+    ]
+  }
+}
