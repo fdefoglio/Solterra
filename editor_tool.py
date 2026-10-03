@@ -6,6 +6,16 @@ Purpose
 -------
 Bridge between Microsoft Word documents and Markdown for AI-assisted editing.
 
+Version 3.1. The Markdown format is still v3: exports start with
+'<!-- editor_tool v3 export -->', and v3 and v3.1 files are interchangeable.
+
+v3.1 additions
+--------------
+* --export --review writes <name>_for_review.md: the normal export plus
+  read-only comments with the page each paragraph starts on, the document's
+  tables, and a table/figure inventory. It imports exactly like a normal export.
+* Object tokens name charts, diagrams, text boxes and shapes, with alt text.
+
 v3 changes vs v2
 ----------------
 * Far fewer [SPECIAL] paragraphs. Bookmarks (Word puts _Toc/_Hlk/_Ref
@@ -1365,7 +1375,7 @@ def md_to_plain(text):
 
 def main():
     parser = argparse.ArgumentParser(
-        description='AI Language Editor: Word <-> Markdown bridge (v3)')
+        description='AI Language Editor: Word <-> Markdown bridge (v3.1)')
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument('--export', action='store_true',
                        help='Export DOCX to labeled Markdown')
