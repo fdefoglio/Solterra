@@ -1124,8 +1124,17 @@ def export_to_labeled_md(docx_path, review=False):
         for n, (after, tpage, tbl) in enumerate(tables, 1):
             tables_after.setdefault(after, []).append((n, tpage, tbl))
 
+        last_page = [None]
+
+        def emit_page(page):
+            if pages and page != last_page[0]:
+                lines.append(f"<!-- page {page} -->")
+                lines.append("")
+                last_page[0] = page
+
         def emit_tables(after):
             for n, tpage, tbl in tables_after.get(after, ()):
+                emit_page(tpage)
                 where = (f"page {tpage}, " if pages else "") + \
                         (f"after [{after}]" if after >= 0 else "before [0]")
                 lines.append(f"<!-- TABLE {n} ({where}) - read-only, not imported")
@@ -1134,7 +1143,6 @@ def export_to_labeled_md(docx_path, review=False):
                 lines.append("")
 
         emit_tables(-1)
-        last_page = None
 
         special = tokens = 0
         for i, para in enumerate(paras):
@@ -1156,10 +1164,8 @@ def export_to_labeled_md(docx_path, review=False):
             if not body.strip():
                 body = "[Empty Paragraph]"
 
-            if pages and pages[i] != last_page:
-                lines.append(f"<!-- page {pages[i]} -->")
-                lines.append("")
-                last_page = pages[i]
+            if pages:
+                emit_page(pages[i])
             lines.append(f"[{i}] {tag}{body}")
             lines.append("")
             emit_tables(i)
