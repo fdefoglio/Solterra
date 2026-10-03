@@ -17,9 +17,21 @@ Scan for all of the following — checklist, not menu:
 
 - **`[SPECIAL]` paragraphs whose text changed** between the source export and the
   final rectified markdown. The importer skips them, so the DOCX still shows the
-  source text. Typical case: reference entries with live hyperlink fields that
-  were rectified to FAOSTYLE in the markdown. Action: REPLACE the paragraph text
-  in Word with the rectified text.
+  source text. Typical cases: table-of-contents or list-of-tables entries,
+  multi-paragraph footnotes, entries of a reference-manager bibliography, and — in
+  exports made with editor_tool v2 — reference entries with hyperlinks. Action:
+  REPLACE the paragraph text in Word with the rectified text. If the paragraph
+  belongs to a Zotero/EndNote/Mendeley bibliography, the action is to correct the
+  record in the reference manager and refresh, because a Word-side edit is
+  overwritten on the next refresh; say so in Notes.
+- **Paragraphs the importer reported as left unchanged** (the "need attention in
+  Word" list printed by the import) that could not be fixed in the markdown and
+  re-imported. Action: REPLACE with the rectified text, keeping the live
+  citation/cross-reference fields in place.
+- **Corrections behind protected tokens.** A `⟦N|…⟧` token is a live Word field,
+  so its displayed text cannot be edited through the markdown. Action: EDITOR TASK
+  — e.g. "correct the year of this citation in the reference manager and refresh",
+  "re-point this cross-reference to Table 4".
 - **Parked insertions.** Content the pipeline could not insert because labels may
   never be invented (new reference entries, new headings, author-action-checklist
   items marked "insert at DOCX stage"). Action: INSERT at the stated position.
@@ -61,8 +73,10 @@ forgotten one.
 
 ## Verification and cross-references
 
-- Every `[SPECIAL]` label whose text differs from the source export must appear as
-  a row; count rows against that diff, not against memory.
+- Every `[SPECIAL]` label whose text differs from the source export, and every
+  paragraph in the importer's "need attention in Word" list that was not re-imported
+  successfully, must appear as a row; count rows against that diff and that list,
+  not against memory.
 - Note the action count in the technical review report and surface the sheet in
   the executive summary — the DOCX is "near final", and this sheet is precisely
   what stands between it and final.

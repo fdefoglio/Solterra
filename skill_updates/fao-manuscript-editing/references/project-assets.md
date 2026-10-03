@@ -30,7 +30,7 @@ does not exist, use the upload folder and note it in the technical review report
 | `fao_styleguide_schema.json` | Authoritative `scope` field for ACR-DEF-001 |
 | `fao_styleguide.md` | The official styleguide in markdown — replaces the PDF guide (see §4) |
 | `FAO_AGENTS_CONFIG_UPDATED.yaml` | Job card: agent roster, pass definitions, checkpoint configuration, citation-gap-analysis categories and artifact paths |
-| `editor_tool.py` | The client's DOCX ⇄ labeled-markdown bridge. Phase 0 export (if only the DOCX is supplied) and Phase 9 import (edited labeled markdown → unedited DOCX, formatting retained). A project-supplied copy wins over the skill's bundled `scripts/editor_tool.py` |
+| `editor_tool.py` | The client's DOCX ⇄ labeled-markdown bridge. Phase 0 export (if only the DOCX is supplied) and Phase 9 import (edited labeled markdown → unedited DOCX, formatting retained). A project-supplied copy wins over the skill's bundled `scripts/editor_tool.py`, unless it is older than v3 (a v3 copy contains the string `editor_tool v3 export`): then use the bundled copy and say so, because an older importer writes v3 `⟦N|…⟧` tokens into the DOCX as literal text |
 
 The unedited source DOCX is itself an intake asset: when the client supplies it
 alongside the labeled markdown, keep it untouched for the Phase 9 import.

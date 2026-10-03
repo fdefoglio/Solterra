@@ -5,7 +5,8 @@ Usage:
     python extract_headings.py <file.md|file.docx> [--body]
 
 Handles:
-  * editor_tool v2 markdown exports  -> "[N] # Heading" lines
+  * editor_tool v2/v3 markdown exports -> "[N] # Heading" lines
+    (v2 tags headings that carry a bookmark as "[N] [SPECIAL] # Heading")
   * plain markdown                   -> "# Heading" lines
   * .docx                            -> paragraphs with a Heading style
 
@@ -24,8 +25,8 @@ from xml.etree import ElementTree
 
 W = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
 
-MD_HEADING = re.compile(r"^(?:\[(?P<num>\d+)\]\s*)?(?P<hashes>#{1,6})\s+(?P<text>.+?)\s*$")
-MD_BOLD_ONLY = re.compile(r"^(?:\[(?P<num>\d+)\]\s*)?\*\*(?P<text>.+?)\*\*\s*$")
+MD_HEADING = re.compile(r"^(?:\[(?P<num>\d+)\]\s*)?(?:\[SPECIAL\]\s*)?(?P<hashes>#{1,6})\s+(?P<text>.+?)\s*$")
+MD_BOLD_ONLY = re.compile(r"^(?:\[(?P<num>\d+)\]\s*)?(?:\[SPECIAL\]\s*)?\*\*(?P<text>.+?)\*\*\s*$")
 MD_PARA = re.compile(r"^\[(?P<num>\d+)\]\s+(?P<text>.+)$")
 
 

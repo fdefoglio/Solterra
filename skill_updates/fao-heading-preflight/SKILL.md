@@ -43,7 +43,7 @@ applied through Word styles, not direct formatting.
 
 ## Step 1 — build the heading inventory
 
-Run `scripts/extract_headings.py <file>`. It handles the editor_tool v2 markdown export
+Run `scripts/extract_headings.py <file>`. It handles editor_tool v2 and v3 markdown exports
 (`[N] # Heading` lines, plus bold-only paragraphs, which are frequently a title or a heading
 that lost its style) and .docx (paragraphs with a Heading style, plus bold-only paragraphs).
 
@@ -136,7 +136,9 @@ anything that blocks the editorial pass.
 These hold regardless of what the check turns up:
 
 - Never alter `[N]` paragraph numbers in the markdown export, and leave `[SPECIAL]` lines
-  untouched — they carry Word fields, images or hyperlinks that are re-imported verbatim.
+  untouched — the importer skips them (in v3: table-of-contents and list entries). Keep
+  every `⟦N|…⟧` token exactly as it is: it stands for a live Word field, image or
+  cross-reference, and the importer refuses a heading whose token was changed or dropped.
 - Body text is out of scope. If a heading fix implies a body change (a cross-reference to a
   renumbered section), record it in the TSV rather than making it.
 - Renumbering sections changes every cross-reference in the paper and, in a series, the

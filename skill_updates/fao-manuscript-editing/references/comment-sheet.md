@@ -17,7 +17,8 @@ Before a candidate comment enters the sheet, classify it: **who must act?**
   translation), *decide* (preferred wording, whether a repetition is intentional)
   or *confirm* (a fact, a year, a deletion). → comment sheet.
 - **EDITOR** — resolving it is a mechanical task the editor performs, typically in
-  Word at the DOCX stage: applying `[SPECIAL]`-skipped edits, re-sorting the
+  Word at the DOCX stage: applying `[SPECIAL]`-skipped edits, correcting the
+  content behind a `⟦N|…⟧` token (field citation, cross-reference), re-sorting the
   reference list, inserting author-supplied content, deleting author-confirmed
   struck entries, anything phrased "apply manually in Word", "at the DOCX stage",
   "the importer skips", "move/re-sort …". → DOCX action sheet
