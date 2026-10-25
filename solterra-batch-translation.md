@@ -16,8 +16,7 @@
 
 ---
 name: "solterra-batch-translation"
-description: >-
-  Translate Subaru Solterra owner's-manual and automotive UI content from English into Dutch using a six-column CSV workfile. Trigger this skill whenever a CSV is supplied whose columns are, in order, English | Translation | Replacements | Terminology | Translation Memory | Notes — including rows carrying `TERMS: {...}` dictionaries or `[FUZZY nn%]` pre-fills. Also trigger when the user mentions "Solterra", "Subaru batch", "Solterra CSV", or EN→NL automotive manual translation with pre-matched terminology, even without naming the skill. Do NOT trigger for Honda diagnostic EN→NL work (HONDA_SENTINEL_V3), Dutch→English machinery content (agri-machinery-nl-en), or Afrikaans→English minutes (gsa-batch-translation).
+description: "Translate Subaru Solterra owner's-manual and automotive UI content from English into Dutch using a six-column CSV workfile (English | Translation | Replacements | Terminology | Translation Memory | Notes)."
 ---
 
 Solterra Localisation: English → Dutch
@@ -37,7 +36,7 @@ supply the client's standing glossary where a row's columns are empty.
 **Never import Dutch terminology from the Honda work into this client.** The
 two clients diverge on core vocabulary (Solterra: *batterij*,
 *tractiebatterij*; Honda: *accu*). Solterra terminology comes from the
-workfile columns first, then the master list (`reference/terminology.csv`),
+workfile columns first, then the master list (`terminology.csv` on GitHub),
 and nowhere else. See The Master Terminology List below.
 
 The CSV Contract
@@ -45,6 +44,19 @@ The CSV Contract
 
 Six columns, in order. Read all six per row before translating. A context
 file may accompany it — see The Context File below.
+
+**Where the files are.** The workfile is produced by `solterra.py next` in
+the user's working folder (`C:\Temp\core_dep`, reached through the linked
+computer). It sits beside `full_context.csv`, `batch_map.csv` (workfile row
+→ Transit segment numbers) and `terminology.csv`. Work on them there, in
+place. `solterra.py import` later writes column 2 into the Transit `.NLD`
+by segment number, so the rules below are what make the import work.
+
+**Rows are fixed.** Never add, remove, split, merge or reorder rows, and
+never change column 1. `import` checks the workfile against
+`batch_map.csv` row by row and refuses if they differ. Identical English
+sentences have already been merged into one row, and `import` fills every
+segment that row serves.
 
 | Column | Content | Your obligation |
 | --- | --- | --- |
@@ -56,12 +68,41 @@ file may accompany it — see The Context File below.
 | 6. Notes | Empty, or upstream fuzzy/mandatory remarks | Append your coded note (see Notes Taxonomy) |
 
 An empty `TERMS: {}` means no terminology exists for the row: translate
-fresh under this skill's style rules, check `reference/terminology.csv` for
+fresh under this skill's style rules, check the master list for
 a standing match, and mark the row `FRESH` in Notes.
 
 `PATTERN: [Contactschakelaar] [Aan] [Indicatielampje]` is an unordered bag
 of the same terms, **not a sentence skeleton**. Never build a sentence by
 stringing the bracketed items together.
+
+### Tag placeholders (double spaces)
+
+Column 1 shows the segment as Transit shows it: inline tags (an icon, an
+`<mmui>` UI label, a cross-reference) are removed, and each one that stood
+between two words leaves a **double space** (`Touch  to display the mini
+player.`). `import` puts each tag back at a double space in the Dutch, in
+order, so the double spaces are load-bearing:
+
+* The Dutch has **exactly as many double spaces as column 1**: no more, no
+  fewer, and no double space anywhere else.
+* Put each one where that tag belongs in the Dutch sentence, in the same
+  order as in the English: `Touch  to display the mini player.` → `Tik op
+  om de miniplayer weer te geven.`
+* Where the tag ends the clause in Dutch, put the double space before the
+  punctuation: `Touch  tab.` → `Tik op het tabblad  .` (`import` closes up
+  the space before `.`, `,`, `;`, `:`, `)`, `!`, `?`).
+* Read `full_context.csv` to see what each gap holds (a UI label, an icon),
+  so the Dutch around it is right: *op* before a button, *het tabblad*
+  before a tab name.
+* A tag glued to a word or at the very start or end (`/ switches`,
+  `Bluetooth® device`) leaves no double space and cannot be placed
+  automatically: translate the visible text, reproduce column 1's
+  punctuation around the gap (`/-schakelaars`), and say in Notes where the
+  tags go. `import` lists such segments in `manual_segments.csv` for the
+  user.
+* If the tags in Dutch must come in a different order from the English,
+  keep the English order of double spaces and flag the row `HARMONISE:` so
+  the user can fix it in Transit.
 
 ### Priority Hierarchy (strict)
 
@@ -86,17 +127,17 @@ Notes with the `HARMONISE:` prefix.
 The Master Terminology List
 ---------------------------
 
-`reference/terminology.csv` is an unaltered copy of the user's master
-list, kept on GitHub (`fdefoglio/Solterra`, `terminology.csv`): every
-field quoted, CRLF line endings. The GitHub file is the master; the copy
-exists only as a fallback. It holds client-
+The master list is `terminology.csv` on GitHub (`fdefoglio/Solterra`):
+every field quoted, CRLF line endings. The user keeps a local copy in the
+working folder, and `reference/terminology.csv` is an older fallback. It holds client-
 mandated terms and terms standardised locally by the user; only the user's
 CAT tool shows which is which. Locally standardised terms are later
 approved and mandated by the client, so treat **every entry as binding**.
 It is the only terminology list for this client.
 
-**Refresh before a batch.** If `bash_tool` has network access, fetch the
-live list first, because the user adds to it between batches:
+**Refresh before a batch.** Fetch the live list first, because the user
+adds to it between batches. Where the repository is attached to the
+session (`fdefoglio/Solterra`), pull it; otherwise download it:
 
 ```bash
 curl -sSL -o /tmp/terminology.csv https://raw.githubusercontent.com/fdefoglio/Solterra/main/terminology.csv
@@ -104,11 +145,29 @@ curl -sSL -o /tmp/terminology.csv https://raw.githubusercontent.com/fdefoglio/So
 
 If the download succeeds and parses as two columns under an
 `english,dutch` header, use it in place of the bundled copy. If it fails, use
-the bundled copy and say so in one line of the reply, so the user knows newer
-entries may be missing. Rows that do not parse into two columns are
-skipped and listed for the user to fix on GitHub. Read the list; never
-rewrite, re-quote or repair the bundled copy, so it stays identical to
-GitHub.
+the user's local `terminology.csv`, else the bundled copy, and say so in one
+line of the reply, so the user knows newer entries may be missing. Rows that
+do not parse into two columns are skipped and listed for the user to fix on
+GitHub. Read the list; never rewrite, re-quote or repair existing rows, so
+the copies stay identical to GitHub. Where the user's local
+`terminology.csv` differs from GitHub, GitHub wins: say so in one line.
+
+**Adding terms.** When a batch settles a term the list does not have (a
+UI label, a feature name, a compound used across rows), add it in the same
+turn, in both places:
+
+1. Append it to the user's local `terminology.csv`: every field quoted,
+   CRLF, UTF-8, skipping any key already present (case-insensitive).
+2. Append the same rows to `terminology.csv` in the repository, then commit
+   and push to `main`, with the terms named in the commit message. If the
+   repository is not attached, attach it with push access first; the user
+   approves that once per chat.
+3. Name the added terms in one bullet under **Client decisions**, and say
+   that GitHub was updated. If the push fails, say so in that bullet and
+   list the rows for the user to add by hand.
+
+Add only terms the batch actually settled. A rendering flagged
+`HARMONISE:` waits until the user confirms it.
 
 **Matching.** Match case-insensitively on whole words, longest entry
 first. A match survives inflection and an inserted article (*het
@@ -146,12 +205,11 @@ entry).
 The Context File
 ----------------
 
-The workfile is a filtered pull: only the segments needing work, order
-incidental. A second file, `context_T1.csv` or equivalent, may be supplied
-alongside it, rebuilding the translator's CAT view — every segment of the
-language pair in **document order**, with the confirmed Dutch above and
-below each batch segment. It is produced by `transit_context.py` from the
-Transit `.ENU`/`.NLD` pair.
+The workfile holds only the untranslated segments of one Transit file.
+`full_context.csv`, written alongside it by `solterra.py next`, is the
+**whole file** in **document order**: every segment, with the confirmed
+Dutch above and below each batch segment. It is rebuilt from the Transit
+`.ENU`/`.NLD` pair each time.
 
 **Read it before translating any row, not as a lookup afterwards.** It is
 read-only: nothing is ever written back to it, and the workfile remains the
@@ -159,21 +217,21 @@ sole delivery artefact.
 
 | Column | Content |
 | --- | --- |
-| `Seg` | Transit segment number; document order |
-| `Struct` | Innermost three document elements — `row/entry/p`, `note_body/note_para/title`, `att_list1_item/itemtxt` |
-| `Status` | Segment status, decoded from Transit's own status field |
-| `StatusCode` | Raw status code, for verifying the label |
-| `Author` | Who last confirmed the segment |
-| `EN` / `NL` | Source and target; `NL` is blank where the status is Not translated |
-| `Batch` | Row number in the workfile, blank for context-only segments |
+| `RowIndex` | Transit segment number (`SegID`); document order. These are the segment numbers used in Notes, the outside-the-batch report and `batch_map.csv` |
+| `English` | Source, **with the raw Transit tags** (`<Tag …>`, `<FontTag …>`, `<mmui>` labels): this is where you see what each double space in the workfile stands for |
+| `Translation` | Target with its tags. For an untranslated segment it repeats the English |
+| `Status` | `Translated` (confirmed, house style), `Edited, unconfirmed` (changed, not yet confirmed: weaker evidence than *Translated*), blank (not translated: the batch's own segments, or ones still to do) |
 
-A `...` row with `(gap: n segments)` marks a break in the run. Rows either
-side of it are **not** neighbours; never read them as consecutive.
+Where `Translation` repeats `English` and `Status` is blank, the segment is
+untranslated, not a defect.
 
-Status values: *Translated* (confirmed, house style), *Not translated*
-(the batch's own segments), *Not for translation* (markup and cross-
-references copied through), *Edited, unconfirmed* (recently changed, not
-yet confirmed — weaker evidence than *Translated*).
+`batch_map.csv` (`Row,SegIDs,English`) links each workfile row to its
+segment number(s). A row serving several segments lists them separated by
+`;` (`30;38`).
+
+Older batches may come with a windowed `context_T1.csv` (`Seg`, `Struct`,
+`Status`, `EN`/`NL`, `Batch`, with `...` gap rows); read it the same way,
+and never treat rows either side of a gap as neighbours.
 
 ### What to take from it
 
@@ -184,7 +242,8 @@ yet confirmed — weaker evidence than *Translated*).
   Where a *full-segment* TM pair and a confirmed neighbour disagree on a
   whole string, apply the higher level but raise `HARMONISE:` rather than
   overriding silently.
-* **Register and structure.** `Struct` says whether a string is a table
+* **Register and structure.** The tags in the `English` column (and
+  `Struct` where a windowed file has it) say whether a string is a table
   cell, a list item, a heading or a footnote. Match the siblings: list
   items that are conditions stay plain present-tense statements; table
   cells stay nominal and article-free.
@@ -205,16 +264,20 @@ segment numbers relied on.
 
 ### Limits
 
-* Batch rows are matched to segments by exact English text. A row whose
-  inline content was stripped during extraction — a cross-reference reduced
-  to `()`, a button label to `“”` — will not match. Locate it from its
-  neighbours instead, reproduce the empty placeholder exactly as column 1
-  supplies it, and mark `INPUT-ERR:`.
-* One workfile row may correspond to **two** Transit segments joined at a
-  full stop. Say so in Notes so the delivery can be split on re-import.
-* The window is counted in segment numbers, not structure, so it can cut a
-  table in half. Absence of evidence in the window is not evidence of
-  absence.
+* Locate each row through `batch_map.csv` (its segment numbers), not by
+  matching text: the English column of the context file carries tags, and
+  column 1 does not. A cross-reference reduced to `()` or a button label to
+  `“”` is extraction, not an error: reproduce it exactly as column 1 gives
+  it. Mark `INPUT-ERR:` only for real damage (truncated source, mangled
+  reference columns).
+* A row serving several segments (`30;38` in `batch_map.csv`) is filled in
+  all of them on import; it needs no note and no client-decision bullet.
+* One Transit segment may hold **two** sentences. Translate it as one row;
+  never split it. `SPLIT:` is only for the rare row that has to be split
+  in Transit, and says where.
+* A windowed context file is counted in segment numbers, not structure,
+  so it can cut a table in half. Absence of evidence in the window is not
+  evidence of absence.
 
 ### Outside-the-batch report
 
@@ -305,8 +368,15 @@ that each resolution has the same shape.
    `current` is the Dutch as delivered, `to_replace` the revision.
 5. **Reply shape.** The reply contains these parts, in this order, and
    nothing else:
-   1. the CSV in a code block: header `"current","to_replace"`, every field
-      quoted;
+   1. the CSV: written to `context_fixes.csv` in the user's working folder
+      (header `"current","to_replace"`, every field quoted, UTF-8, CRLF), so
+      `solterra.py import` applies it; if a `context_fixes.csv` is already
+      there, append to it. Where the folder is out of reach or the user asks
+      for it in chat, give it in a code block instead. A segment whose
+      `current` contains inline tags is skipped by `replace_segments.py`:
+      give it as a plain XML `<Seg>` snippet (single quotes in attributes,
+      never CSV-doubled) after the bullets, for the user to paste in
+      Transit;
    2. one bullet per row, or per group of rows with the same change:
       `* **5153:** what changed and why`, one or two sentences, phrased so
       it can go straight into the client note;
@@ -314,7 +384,8 @@ that each resolution has the same shape.
       segments and saying why no replacement is possible, framed as a
       client query.
 
-   No verdict line, no file tag, no recap of the report.
+   No verdict line, no recap of the report. When the CSV went to the file,
+   end with its name in backticks: `context_fixes.csv`.
 
 Reading the Reference Columns Correctly
 ---------------------------------------
@@ -335,6 +406,13 @@ required in the sentence. *the possibility of a collision is high* is
 *is de kans op een aanrijding groot*, not *…is hoog*. Apply the term where
 it is genuinely the head word; otherwise use the idiomatic Dutch and note
 `TERM-CONTEXT:`.
+
+**100% TM rows lose their double spaces.** A row noted `100% TM MATCH -
+Exact` arrives with the stored Dutch in column 2. The TM collapses
+whitespace, so for a tagged segment the double spaces are gone. Check
+every exact row against column 1: restore the double spaces where the tags
+belong, apply the master list and the style rules as for any row, and note
+`TM-ADAPTED:` if anything changed (`TERM-APPLIED` alone otherwise).
 
 **Fuzzy pre-fills inherit upstream corruption.** The `[FUZZY nn%]` string in
 column 2 was produced against the *similar* English sentence quoted in
@@ -363,6 +441,27 @@ Style Rules (Dutch, owner's-manual register)
   English word order, rhythm, or sentence boundaries — restructure freely.
   Test each string: would a Dutch manual writer, given only the meaning,
   produce this sentence? If the English shows through, rewrite.
+* **Prefer the active voice (judgment check).** A passive that mirrors the
+  English is one of the commonest signs of translationese in this manual,
+  and a sentence that shows it must be recast. For every passive in a
+  finished string, ask whether a clear agent exists — the reader (*u*),
+  the system, or a named device (*de rijrecorder*, *het scherm*) — and
+  whether the active reads better. If both hold, recast:
+  * *Als dit niet uit het beeld kan worden opgemaakt* → *Als u dit niet
+    uit het beeld kunt opmaken*
+  * *wordt een botsing mogelijk niet correct gedetecteerd* → *detecteert
+    de rijrecorder een botsing mogelijk niet correct*
+  * *wanneer de 12V-batterij wordt losgekoppeld* (by an accident) →
+    *wanneer de 12V-batterij loskomt*; an intransitive verb is often the
+    cleanest active form when nobody acts deliberately.
+
+  Keep the passive when the agent is unknown or irrelevant (*Het scherm
+  wordt weergegeven* in a list of display states), when recasting would
+  break a short UI string or label, in legal and disclaimer text where the
+  impersonal register is deliberate, and when the only active subject
+  would be *je* or an invented *men*. Recasting never drops a hedge: carry
+  *kan* or *mogelijk* into the active sentence. Mark every recast row
+  `ACTIVE:` in Notes.
 * **Address the reader with *u***; never *je*. Instructions take the
   imperative (*Druk op…*, *Zorg ervoor dat…*, *Raadpleeg…*).
 * **No future tense.** English *will* does not survive into Dutch technical
@@ -475,7 +574,7 @@ Order of preference, strictest first:
    * zero anaphora where Dutch permits it and English does not
 2. **Synonymise only if elimination fails**, and only on non-terminological
    words. A word used consistently across the project is not thereby a
-   bound term: if it appears in neither `reference/terminology.csv` nor
+   bound term: if it appears in neither the master list nor
    the row's own Terminology column, it is ordinary vocabulary and may be
    varied. Watch for synonyms that carry a regional marker or collide
    with a false friend in a neighbouring language of the review chain.
@@ -618,7 +717,7 @@ Workflow
 --------
 
 0. **Read the context file first**, if one is supplied. Locate every batch
-   segment in it, note which rows failed to match, and read the confirmed
+   segment in it through `batch_map.csv`, and read the confirmed
    Dutch around each one before translating anything. Jot down anything
    that belongs in the Outside-the-batch report as you pass it, rather than
    re-reading the window for it later.
@@ -661,6 +760,7 @@ Notes Taxonomy (coded prefixes)
 | `CONSISTENCY:` | Changed in the Consistency Pass to match a sibling row |
 | `CONTEXT:` | Decided on evidence from the context file; give the segment numbers |
 | `DEDUP:` | Within-segment word repetition removed, or deliberately retained; state which and how |
+| `ACTIVE:` | Passive recast as active (or deliberately kept); state the agent used |
 | `HARMONISE:` | Conflict or source-side issue needing a client decision |
 | `INPUT-ERR:` | Malformed reference data in this row; describe briefly |
 | `SPLIT:` | Row joins two Transit segments; say where to split on re-import |
@@ -679,13 +779,16 @@ contract, not a judgment call.
 
 ### The workfile
 
-* **Name and place.** Deliver the workfile under its input filename
-  (`output_T1b.csv` stays `output_T1b.csv`) in `/mnt/user-data/outputs/`,
-  and present it with `present_files`. It is the only file delivered for a
-  batch.
-* **Byte shape.** Same encoding as the input (UTF-8; keep a BOM only if the
-  input had one), CRLF line endings, the same header row, the same row
-  order, six columns in every row. Write it with Python's `csv` module and
+* **Name and place.** Write the workfile back **in place**, under its
+  input filename, in the user's working folder (normally
+  `C:\Temp\core_dep\output.csv`); back it up first outside the folder.
+  Where the folder is not reachable and the file was attached, deliver it
+  under its input filename in `/mnt/user-data/outputs/` and send it to the
+  user. It is the only batch file delivered; `terminology.csv` and
+  `context_fixes.csv` are updated as set out elsewhere in this skill.
+* **Byte shape.** Same encoding as the input (UTF-8; keep the BOM when the
+  input has one, as `solterra.py` writes it), CRLF line endings, the same
+  header row, the same row order, six columns in every row. Write it with Python's `csv` module and
   default minimal quoting, never by hand, so commas, quotes and curly
   quotes inside fields survive.
 * **Columns 1, 3, 4, 5** are carried over unchanged, character for
@@ -707,7 +810,10 @@ Run a script that re-reads both files and checks:
 * no imperial units, no *zal/zullen*, no *je*;
 * no decimal point between digits, no straight double quote, no space
   before a colon;
-* no row with *voertuig* twice.
+* no row with *voertuig* twice;
+* the number of double spaces in column 2 equals the number in column 1,
+  in every row;
+* the row count and column 1 still match `batch_map.csv`.
 
 Print only the verdict and any flagged rows. Then print a compact review
 pass — each row's English, the Dutch, and the fuzzy source quoted in
@@ -729,17 +835,18 @@ this order and these headings, and omit any section that has no items
 2. **`**Client decisions**`**: one bullet per issue, grouping rows that
    share an issue (`* **Rows 3, 20:** …`). Covers `HARMONISE:` items
    (including doubtful list entries), proposed standards for terms not in
-   the master list, `INPUT-ERR:` rows, `SPLIT:` rows, and rows that serve
-   more than one segment. Each bullet says what the problem is and what
-   was applied.
+   the master list, terms added to the list and GitHub, `INPUT-ERR:` rows,
+   `SPLIT:` rows, and rows whose tags `import` cannot place (say where the
+   tags go). Each bullet says what the problem is and what was applied.
 3. **`**Outside the batch (the context file is read-only, so nothing was
    changed)**`**: as set out under The Context File; one line per item,
    meaning errors first, with the suggested Dutch where it is obvious.
 4. **File tag**: the delivered filename in backticks, as the last line.
 
 Follow-up deliverables in the same conversation use the
-`"current","to_replace"` format in a code block, followed by the short
-client-note list: a normalisation set as set out under The Master
+`"current","to_replace"` format (written to `context_fixes.csv` for
+outside-the-batch items, a code block for a normalisation set), followed by
+the short client-note list: a normalisation set as set out under The Master
 Terminology List, and resolved Outside-the-batch items by the Resolution
 Map under The Context File.
 
@@ -751,7 +858,7 @@ across a batch. Workfile columns always outrank them.
 
 | File | Contents | When to read |
 | --- | --- | --- |
-| `reference/terminology.csv` | Unaltered copy of the GitHub master list (about 2,000 EN→NL pairs, mandated and locally standardised; all binding) | Refresh from GitHub at the start of every batch (see The Master Terminology List); check every row and every window segment against it |
+| `reference/terminology.csv` | Fallback copy of the GitHub master list (about 2,200 EN→NL pairs, mandated and locally standardised; all binding). May be older than GitHub and the user's local copy | Only when neither GitHub nor the user's local `terminology.csv` can be read (see The Master Terminology List) |
 | `reference/translation-memory.csv` | Approved full-segment pairs | Sentence-level near-matches |
 | `reference/patterns.csv` | Recurring phrase-level renderings | Cross-references, safety phrasing, boilerplate |
 | `reference/units.csv` | Client EN→NLD unit, number and punctuation table | **Any row containing a figure, unit, `No.`, or quotation mark** |
@@ -781,12 +888,16 @@ Quality Gate (final check before delivery)
 * ☐ No content word repeated within a segment, unless retained with a `DEDUP: retained` note
 * ☐ Every anaphor used to eliminate a repetition has the nearest antecedent, agreeing gender and number, and no competing noun in between
 * ☐ No translationese: every string passes the native-author test
+* ☐ Every passive checked; active used wherever a clear agent exists and it reads better, with hedges kept
 * ☐ Compounds closed up; hyphens only after acronym, digit, brand, or vowel clash
 * ☐ Brand, model, code, asterisk, and placeholder strings byte-identical to source
+* ☐ Double spaces in column 2 match column 1 in number and order, each where its tag belongs; 100% TM rows restored
+* ☐ Rows, row order and column 1 unchanged, so the workfile still matches `batch_map.csv`
 * ☐ de/het correct throughout
 * ☐ Repeated English sources → identical Dutch
-* ☐ Where a context file was supplied: every batch row located in it, house terms taken from confirmed neighbours, register matched to `Struct`, and unmatched rows marked `INPUT-ERR:`
-* ☐ Workfile written and verified in code as set out in Output Delivery Format; delivered under its input filename
+* ☐ Where a context file was supplied: every batch row located in it through `batch_map.csv`, house terms taken from confirmed neighbours, register matched to the tags or `Struct`
+* ☐ Workfile written in place and verified in code as set out in Output Delivery Format
+* ☐ New terms appended to the local `terminology.csv` and pushed to GitHub, and named in the reply
 * ☐ Reply follows Output Delivery Format: verdict line, client decisions, outside-the-batch report, file tag; no recap
 * ☐ Where the window showed meaning errors, term drift, on-sight defects or source-side faults in confirmed or edited segments (the user’s own *Edited, unconfirmed* segments included): Outside-the-batch report given, one line per item, severest first; context file untouched
 
