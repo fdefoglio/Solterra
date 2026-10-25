@@ -646,6 +646,15 @@ Order of preference, strictest first:
    * pronominal adverbs — *ervan*, *daarvan*, *daarmee*, *daarop*
    * relative subordination with *die/dat*, collapsing two clauses into one
    * zero anaphora where Dutch permits it and English does not
+   * comparison anaphora — where a comparison repeats its head noun
+     (*the charge shown may not match the display on the phone*, *differs
+     from the value of the vehicle*), let a demonstrative stand in for the
+     second instance: *De getoonde resterende batterijlading komt mogelijk
+     niet overeen met die op de mobiele telefoon* (*die* = *de
+     batterijlading*), *verschilt van dat van het voertuig*. Use *die* for
+     de-words and plurals, *dat* for het-words; the anaphor conditions
+     below apply. Prefer it to a paraphrase (*met wat de mobiele telefoon
+     aangeeft*), which is wordier and gains nothing
 2. **Synonymise only if elimination fails**, and only on non-terminological
    words. A word used consistently across the project is not thereby a
    bound term: if it appears in neither the master list nor
@@ -786,6 +795,9 @@ Outside-the-batch report.
   formatting normalised to Dutch.
 * **UI label**: short and nominal; no added articles, no sentence
   punctuation.
+* **Comparison**: *X may not match the display/value on Y* → *X komt
+  mogelijk niet overeen met die/dat op Y*, the demonstrative agreeing with
+  X (see comparison anaphora under Word Repetition).
 
 Workflow
 --------
