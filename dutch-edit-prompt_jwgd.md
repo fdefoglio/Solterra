@@ -21,7 +21,39 @@ Read every segment. Do not sample or spot-check.
    - Watch for a passive tail on an otherwise active sentence (`…, of wanneer vergelijkbare incidenten worden waargenomen`) and for lists whose items switch between active and passive; fold them under one active verb so the list reads in one go.
    - Keep the passive if the agent is unknown or irrelevant (a list of display states: `Het scherm wordt weergegeven`), if the string is a short UI label or heading, if the text is a legal notice or disclaimer where the impersonal register is deliberate, or if the only possible subject would be `je`, `men` or an agent the text does not name (do not introduce `de fabrikant`, `Toyota` or `SUBARU` as subject).
    - A recast keeps every hedge: `kan worden gedetecteerd` → `kan … detecteren`, never `detecteert`.
-4. **Clunky phrasing and awkwardness.** Fix stacked prepositional phrases, needlessly long impersonal constructions (`het is niet mogelijk om` → `u kunt … niet`), and broken sentence brace structure. If a content word is repeated within one segment, prefer eliminating one instance (gapping, a compound, `ervan`/`daarvan`, a relative clause) over a synonym. An anaphor (`deze`, `die`, `ervan`) is acceptable only if its nearest preceding noun phrase is the antecedent and gender and number agree.
+4. **Clunky phrasing and awkwardness.** Fix stacked prepositional phrases, needlessly long impersonal constructions (`het is niet mogelijk om` → `u kunt … niet`), and broken sentence brace structure.
+5. **Word repetition within a segment.** Apply the procedure in the section below.
+
+**Word repetition within a segment** (the same rule as the Solterra translation skill)
+
+English tolerates repeating a content word inside one sentence; Dutch reads it as clumsy, and a reviewer corrects it on sight. Read each segment on its own and look for any content word that occurs twice. Function words are exempt from the check.
+
+*Scope: within one segment only.* Repetition across segments is usually correct and often required: the same term has to read the same everywhere. Never vary a term to avoid repeating it in a neighbouring segment. Where the two pulls conflict, consistency wins and the repetition stands.
+
+Order of preference, strictest first:
+
+1. **Keep one instance; eliminate the other.** Elimination beats synonymy every time. Try each of these against every repeated word before concluding that the repetition has to stay:
+   - gapping — of a verb (`ontgrendel eerst de portieren en daarna de aansluiting`), a preposition (`door een dealer, een reparateur of een hersteller`), or a head noun across coordinated modifiers (`een door SUBARU erkende of een andere betrouwbare reparateur`; `tussen uw eigen en het andere voertuig`);
+   - compounds — `laad- en ontlaadproces`, not `laadproces en ontlaadproces`;
+   - pronominal adverbs — `ervan`, `daarvan`, `daarmee`, `daarop`, `ervoor`, `erna` (`de 10 seconden ervoor en de 10 seconden erna`);
+   - relative subordination with `die`/`dat`, collapsing two clauses into one;
+   - zero anaphora where Dutch permits it (`accepteert het systeem 10 seconden lang geen nieuwe`);
+   - comparison anaphora — where a comparison repeats its head noun, let a demonstrative stand in for the second instance: `komt mogelijk niet overeen met die op de mobiele telefoon` (`die` for de-words and plurals, `dat` for het-words), subject to the anaphor conditions below. Prefer it to a paraphrase, which is wordier and gains nothing.
+2. **Synonymise only if elimination fails**, and only on words that are not in `terminology.csv`. A word used consistently across the manual is not thereby a listed term: if it is not on the list, it is ordinary vocabulary and may be varied. Avoid synonyms with a regional marker.
+3. **Restructure the sentence** if neither works.
+
+*Where the repetition sits matters as much as how often it occurs.* Two instances close together, and especially in the closing phrase of a sentence, read as clumsy; the same two spread across separate clauses usually do not. Judge by weight and position, not by a word count, and give priority to the end of the sentence, where Dutch expects the weight to settle.
+
+*Listed terms are untouchable by default.* A listed term is never replaced by a synonym; it may be eliminated, or replaced by an anaphor (`deze`, `dit`, `die`, `ervan`), only when all three of these hold:
+- the antecedent is the **nearest** preceding noun phrase;
+- gender and number agree (`deze schakelaar`, `dit lampje`);
+- **no competing noun phrase** stands between anaphor and antecedent.
+
+If any one fails, leave the repetition. `deze` reaching back past another candidate noun is a defect, not a fix.
+
+*Approved exception: `auto` for the reader's own vehicle.* `Vehicle` → `voertuig` is binding. If `voertuig` (or `voertuigen`) would stand twice in one segment and elimination fails or would lose the reference point, render the occurrence that refers to the reader's own car as `auto` (`de auto`, `uw auto`) and keep `voertuig` for the other vehicles: `Er zijn geen naderende voertuigen in de buurt van de auto`. If `voertuig` occurs only once, keep it; if every occurrence refers to another vehicle, the exception does not apply.
+
+Never let deduplication alter meaning, drop a qualifier, weaken a safety instruction, or break a UI string that has to match on-screen text. When in doubt, no change.
 
 **What to keep:**
 
@@ -39,6 +71,7 @@ Read every segment. Do not sample or spot-check.
 - Keep every tag gap exactly as it stands. In this text a removed tag leaves a double space (`Tik op  om …`) or sits against a hyphen (`het -scherm`); keep the same number of gaps, in the same order, next to the same words. Preserve embedded markup, entities and placeholders exactly (`<contactschakelaar>`, `&lt;`, `{tag}`).
 - `to_replace` is a drop-in replacement for the whole of `current`.
 - Before delivering, list programmatically every segment whose final Dutch (your `to_replace`, or the original where you made no change) still contains a passive (`wordt`/`worden`/`werd`/`werden` with a participle, `is`/`zijn … geworden`), and confirm for each that one of the keep conditions under check 3 applies. Recast any that do not, then report in one line how many passives remain and that each was checked.
+- Before delivering, likewise list every segment whose final Dutch still contains a content word twice (compare lemmas, so `regent` and `regenen` count), and confirm for each that elimination, synonymy and restructuring were tried, or that the repetition is a listed term with no safe anaphor, or that it spans clauses far enough apart to read naturally. Report in one line how many repetitions remain.
 - Before delivering, also verify programmatically that every `current` occurs in `<FILE>` as a full segment (if the same segment occurs more than once, one row covers all of them, so list it once), that each `to_replace` has the same number of double spaces as its `current`, and that each `to_replace` keeps the listed terms of its `current`; report the result in one line.
 
 **What the output looks like:** One CSV, `<FILE>_edits.csv`, UTF-8, every field quoted, with these columns:
